@@ -1,4 +1,4 @@
-
+//BOARD A and C
 #include <SPI.h>
 #include <MFRC522.h>
 
@@ -10,7 +10,7 @@
 
 #define NR_OF_READERS 4
 #define NR_OF_CARDS 10
-#define CARD_OFF_RETRY_MAX 3
+#define CARD_OFF_RETRY_MAX 2
 #define NR_OF_RELAYS 8
 
 enum RFState {
@@ -31,17 +31,19 @@ RFState rfReaderState[NR_OF_READERS];
 int rfReaderCardOffRetries[NR_OF_READERS];
 
 const byte GREEN_CARD1[] = { 99, 90, 150, 13 };
-const byte GREEN_CARD3[] = {227, 209, 104, 247};
-const byte GREEN_CARD5[] = {227, 102, 184, 13};
+const byte GREEN_CARD3[] = { 227, 209, 104, 247};
+const byte GREEN_CARD5[] = { 227, 102, 184, 13};
+const byte GREEN_CARD6[] = { 67, 94, 68, 16};
+const byte GREEN_CARD7[] = { 41, 122, 197, 74};
 const byte GREEN_CARD8[] = { 179, 96, 69, 16 };
 const byte RED_CARD2[] = { 115, 181, 132, 13 };
 const byte RED_CARD6[] = { 211, 50, 93, 16 };
 const byte RED_CARD7[] = { 195, 197, 85, 16 };
+const byte RED_CARD8[] = { 211, 247, 67, 16 };
 
 
-
-byte* greenCards[] = { GREEN_CARD1, GREEN_CARD3, GREEN_CARD5, GREEN_CARD8 };
-byte* redCards[] = { RED_CARD2, RED_CARD6, RED_CARD7 };
+byte* greenCards[] = { GREEN_CARD1, GREEN_CARD3, GREEN_CARD5, GREEN_CARD6, GREEN_CARD7, GREEN_CARD8 };
+byte* redCards[] = { RED_CARD2, RED_CARD6, RED_CARD7, RED_CARD8 };
 
 const int RF0_RELAY_RED = A0;    // A0 = PIN_A0; #define PIN_A0   (14)
 const int RF0_RELAY_GREEN = A1;  // A1 = PIN_A1; #define PIN_A1   (15)
@@ -58,13 +60,13 @@ int Reader0Relays[] = { RF0_RELAY_RED, RF0_RELAY_GREEN };
 int Reader1Relays[] = { RF1_RELAY_RED, RF1_RELAY_GREEN };
 int Reader2Relays[] = { RF2_RELAY_RED, RF2_RELAY_GREEN };
 int Reader3Relays[] = { RF3_RELAY_RED, RF3_RELAY_GREEN };
-int* ReadersRelays[] = { Reader0Relays, Reader1Relays, Reader2Relays, Reader3Relays };
+int* ReadersRelays[] = { Reader0Relays, Reader1Relays, Reader2Relays, Reader3Relays }; 
 
 void setup() {
   Serial.begin(9600);
   SPI.begin();  // Init SPI bus
 
-  Serial.println(F("Clean City demo code... Copyright protected"));
+  Serial.println(F("SIM MATEO DEMO CODE... Copyright protected"));
 
   for (uint8_t reader = 0; reader < NR_OF_READERS; reader++) {
     mfrc522[reader].PCD_Init(ssPins[reader], RST_PIN);  // Init each MFRC522 card
@@ -254,7 +256,7 @@ bool CheckCards(byte* buffer, byte** cards) {
 }
 
 void ActivateGreenRelay(uint8_t reader) {
-  Serial.println(F("ActivateGreen"));
+  Serial.println(F("Green LED ON"));
   int releayPin = ReadersRelays[reader][GREENRELAY];
   digitalWrite(releayPin, HIGH);
   Serial.print(F("Set to HIGH Green Relay pin: "));
@@ -262,7 +264,7 @@ void ActivateGreenRelay(uint8_t reader) {
 }
 
 void ActivateRedRelay(uint8_t reader) {
-  Serial.println(F("ActivateRed"));
+  Serial.println(F("Red LED ON"));
   int releayPin = ReadersRelays[reader][REDRELAY];
   digitalWrite(releayPin, HIGH);
   Serial.print(F("Set to HIGH Red Relay pin: "));
@@ -295,10 +297,10 @@ void InitOutputPins() {
     for (int j = 0; j < NR_OF_RELAYS; j++) {
       int pin = ReadersRelays[i][j];
       if (j == REDRELAY) {
-        Serial.print(F("Red Relay output pin#"));
+        Serial.print(F("Red LED Relay output pin#"));
         Serial.println(pin);
       } else {
-        Serial.print(F("Green Relay output pin#"));
+        Serial.print(F("Green LED Relay output pin#"));
         Serial.println(pin);
       }
       pinMode(ReadersRelays[i][j], OUTPUT);
