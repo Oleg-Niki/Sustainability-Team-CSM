@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>SIM Mateo - Clean Energy Exhibit</title>
+    <style>
+        /* Base Styles */
+        
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: #e0f7fa;
+            margin: 0;
+            padding: 20px;
+            transition: background 0.5s;
+        }
+        
+        header {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+        }
+        
+        header button {
+            padding: 15px 25px;
+            font-size: 18px;
+            background-color: #00796b;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: transform 0.2s ease, background-color 0.3s;
+        }
+        
+        header button:hover {
+            transform: scale(1.1);
+            background-color: #004d40;
+        }
+        
+        #start-screen,
+        #main-screen {
+            margin: 80px auto 20px;
+            max-width: 800px;
+            background: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            animation: fadeIn 0.5s forwards;
+        }
+        
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+        /* Buttons inside the exhibit */
+        
+        button {
+            padding: 15px 30px;
+            font-size: 20px;
+            margin: 10px;
+            background-color: #26a69a;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s ease, background-color 0.3s;
+        }
+        
+        button:hover {
+            transform: scale(1.05);
+            background-color: #00796b;
+        }
+        /* Card styles */
+        
+        .cards-container {
+            display: flex;
+            justify-content: center;
+            margin: 15px 0;
+        }
+        
+        .card {
+            width: 50px;
+            height: 75px;
+            border: 2px solid #555;
+            margin: 5px;
+            background: #e57373;
+            /* red tone */
+            border-radius: 4px;
+            transition: background 0.3s, transform 0.3s;
+        }
+        
+        .card.green {
+            background: #66bb6a;
+            transform: scale(1.05);
+        }
+        /* Scenario containers */
+        
+        #scenarios {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+        }
+        
+        .scenario {
+            width: 45%;
+            padding: 15px;
+            background: #f1f8e9;
+            border: 1px solid #c5e1a5;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .scenario h2 {
+            color: #558b2f;
+        }
+        
+        .message {
+            margin-top: 10px;
+            font-weight: bold;
+            color: #424242;
+        }
+        /* Blinking effect for Scenario 1 */
+        
+        @keyframes blink {
+            0% {
+                background-color: #f1f8e9;
+            }
+            50% {
+                background-color: #fff176;
+            }
+            100% {
+                background-color: #f1f8e9;
+            }
+        }
+        
+        .blink {
+            animation: blink 0.5s linear 4;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Always-visible header with Restart button -->
+    <header>
+        <button id="restart-button">Restart</button>
+    </header>
+
+    <!-- Start Screen -->
+    <div id="start-screen">
+        <h1>Welcome to SIM Mateo</h1>
+        <p>Where you visualize the percentage of clean energy used.<br> Each green card represents 10% of clean energy used.
+        </p>
+        <button id="start-button">Start</button>
+    </div>
+
+    <!-- Main Interactive Screen -->
+    <div id="main-screen" style="display: none;">
+        <div id="controls">
+            <button id="add-card">Add Card</button>
+            <button id="remove-card">Remove Card</button>
+        </div>
+        <div id="scenarios">
+            <!-- Scenario 1: California -->
+            <div id="scenario1" class="scenario">
+                <h2>Scenario 1: California</h2>
+                <p>Guess the percentage of clean energy California is using?</p>
+                <div class="cards-container" id="cards-ca">
+                    <!-- Cards will be generated here -->
+                </div>
+                <div class="message" id="message-ca"></div>
+            </div>
+            <!-- Scenario 2: San Mateo County -->
+            <div id="scenario2" class="scenario">
+                <h2>Scenario 2: San Mateo County</h2>
+                <p>Now guess the percentage of clean energy San Mateo County is using</p>
+                <div class="cards-container" id="cards-sm">
+                    <!-- Cards will be generated here -->
+                </div>
+                <div class="message" id="message-sm"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables for card count and maximum reached count
+        let cardCount = 0;
+        let maxCount = 0;
+
+        // Get elements
+        const startButton = document.getElementById('start-button');
+        const startScreen = document.getElementById('start-screen');
+        const mainScreen = document.getElementById('main-screen');
+        const addCardButton = document.getElementById('add-card');
+        const removeCardButton = document.getElementById('remove-card');
+        const restartButton = document.getElementById('restart-button');
+        const cardsCA = document.getElementById('cards-ca');
+        const cardsSM = document.getElementById('cards-sm');
+        const messageCA = document.getElementById('message-ca');
+        const messageSM = document.getElementById('message-sm');
+        const scenario1Div = document.getElementById('scenario1');
+
+        // Function to create a set of cards in a given container.
+        // total is fixed at 10 cards.
+        function createCards(container, greenCount, total = 10) {
+            container.innerHTML = '';
+            for (let i = 0; i < total; i++) {
+                const card = document.createElement('div');
+                card.classList.add('card');
+                if (i < greenCount) {
+                    card.classList.add('green');
+                }
+                container.appendChild(card);
+            }
+        }
+
+        // Update the display based on the current cardCount.
+        function updateUI() {
+            // Scenario 1 (California): once cardCount reaches 3, lock the display at 3 green cards.
+            let caGreen = cardCount >= 3 ? 3 : cardCount;
+            createCards(cardsCA, caGreen);
+
+            // Scenario 2 (San Mateo County): Only start showing additional cards once cardCount > 3.
+            // Effective green cards = cardCount - 3 (if greater than 3; else 0).
+            let smGreen = cardCount > 3 ? cardCount - 3 : 0;
+            createCards(cardsSM, smGreen);
+
+            // Update messages for Scenario 1 (California)
+            if (cardCount === 1) {
+                messageCA.textContent = "CA has reached 10% clean energy at 2003!";
+            } else if (cardCount === 3) {
+                messageCA.textContent = "That's right! California currently uses about 35% of clean electricity (energy)";
+                // Trigger a brief blinking effect on Scenario 1 panel.
+                scenario1Div.classList.add('blink');
+                setTimeout(() => {
+                    scenario1Div.classList.remove('blink');
+                }, 2000);
+            } else {
+                messageCA.textContent = "";
+            }
+
+            // Update messages for Scenario 2 (San Mateo County)
+            if (cardCount >= 6 && cardCount < 9) {
+                messageSM.textContent = "You're getting close! San Mateo reached 60% clean electricity in 2020";
+            } else if (cardCount === 9) {
+                messageSM.textContent = "You got it! San Mateo receives our electricity from our local community choice aggregator which serves 100% clean electricity, we are leading the nation!";
+            } else {
+                messageSM.textContent = "";
+            }
+        }
+
+        // Function to reset the exhibit to its initial state
+        function resetExhibit() {
+            cardCount = 0;
+            maxCount = 0;
+            // Show start screen and hide main screen
+            startScreen.style.display = 'block';
+            mainScreen.style.display = 'none';
+            // Reset messages and cards
+            messageCA.textContent = "";
+            messageSM.textContent = "";
+            createCards(cardsCA, 0);
+            createCards(cardsSM, 0);
+            // Enable buttons
+            addCardButton.disabled = false;
+            removeCardButton.disabled = false;
+        }
+
+        // Start button click handler
+        startButton.addEventListener('click', () => {
+            startScreen.style.display = 'none';
+            mainScreen.style.display = 'block';
+            updateUI();
+        });
+
+        // Add card button handler
+        addCardButton.addEventListener('click', () => {
+            if (cardCount < 10) {
+                cardCount++;
+                if (cardCount > maxCount) {
+                    maxCount = cardCount;
+                }
+                updateUI();
+            }
+        });
+
+        // Remove card button handler
+        removeCardButton.addEventListener('click', () => {
+            if (cardCount > 0) {
+                cardCount--;
+                // If the user reduces the count below the maximum reached (i.e. moving backwards in Scenario 2)
+                if (maxCount > 3 && cardCount < maxCount) {
+                    messageSM.textContent = "Wrong direction";
+                    maxCount = cardCount;
+                }
+                updateUI();
+            }
+        });
+
+        // Restart button handler (always available)
+        restartButton.addEventListener('click', resetExhibit);
+
+        // Initialize exhibit on page load
+        resetExhibit();
+    </script>
+</body>
+
+</html>
