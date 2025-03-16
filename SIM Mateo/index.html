@@ -1,12 +1,10 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <meta charset="UTF-8">
     <title>SIM Mateo - Clean Energy Exhibit</title>
     <style>
         /* Base Styles */
-        
         body {
             font-family: Arial, sans-serif;
             text-align: center;
@@ -15,14 +13,12 @@
             padding: 20px;
             transition: background 0.5s;
         }
-        
         header {
             position: fixed;
             top: 10px;
             right: 10px;
             z-index: 1000;
         }
-        
         header button {
             padding: 15px 25px;
             font-size: 18px;
@@ -33,13 +29,11 @@
             cursor: pointer;
             transition: transform 0.2s ease, background-color 0.3s;
         }
-        
         header button:hover {
             transform: scale(1.1);
             background-color: #004d40;
         }
         /* Start button: moved to top left and styled red */
-        
         #start-button {
             position: fixed;
             top: 10px;
@@ -54,13 +48,11 @@
             cursor: pointer;
             transition: transform 0.2s ease, background-color 0.3s;
         }
-        
         #start-button:hover {
             transform: scale(1.1);
             background-color: darkred;
         }
         /* Screens */
-        
         #start-screen,
         #main-screen {
             margin: 80px auto 20px;
@@ -72,14 +64,10 @@
             opacity: 0;
             animation: fadeIn 0.5s forwards;
         }
-        
         @keyframes fadeIn {
-            to {
-                opacity: 1;
-            }
+            to { opacity: 1; }
         }
         /* Buttons inside the exhibit (controls) */
-        
         #controls button {
             padding: 15px 30px;
             font-size: 20px;
@@ -91,82 +79,55 @@
             cursor: pointer;
             transition: transform 0.2s ease, background-color 0.3s;
         }
-        
         #controls button:hover {
             transform: scale(1.05);
             background-color: #00796b;
         }
         /* Button click animation */
-        
         .button-click {
             animation: pop 0.2s ease;
         }
-        
         @keyframes pop {
-            0% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(0.9);
-            }
-            100% {
-                transform: scale(1);
-            }
+            0% { transform: scale(1); }
+            50% { transform: scale(0.9); }
+            100% { transform: scale(1); }
         }
         /* Shake animation for wrong direction */
-        
         .shake {
             animation: shake 0.5s;
         }
-        
         @keyframes shake {
-            0% {
-                transform: translateX(0);
-            }
-            25% {
-                transform: translateX(-5px);
-            }
-            50% {
-                transform: translateX(5px);
-            }
-            75% {
-                transform: translateX(-5px);
-            }
-            100% {
-                transform: translateX(0);
-            }
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+            100% { transform: translateX(0); }
         }
         /* Card styles */
-        
         .cards-container {
             display: flex;
             justify-content: center;
             margin: 15px 0;
         }
-        
         .card {
             width: 50px;
             height: 75px;
             border: 2px solid #555;
             margin: 5px;
             background: #e57373;
-            /* red tone */
             border-radius: 4px;
             transition: background 0.3s, transform 0.3s;
         }
-        
         .card.green {
             background: #66bb6a;
             transform: scale(1.05);
         }
         /* Scenario containers */
-        
         #scenarios {
             display: flex;
             justify-content: space-around;
             flex-wrap: wrap;
         }
-        
         .scenario {
             width: 45%;
             padding: 15px;
@@ -177,36 +138,17 @@
             position: relative;
             overflow: hidden;
         }
-        
-        .scenario h2 {
-            color: #558b2f;
-        }
-        
-        .message {
-            margin-top: 10px;
-            font-weight: bold;
-            color: #424242;
-        }
+        .scenario h2 { color: #558b2f; }
+        .message { margin-top: 10px; font-weight: bold; color: #424242; }
         /* Blinking effect for Scenario 1 */
-        
         @keyframes blink {
-            0% {
-                background-color: #f1f8e9;
-            }
-            50% {
-                background-color: #fff176;
-            }
-            100% {
-                background-color: #f1f8e9;
-            }
+            0% { background-color: #f1f8e9; }
+            50% { background-color: #fff176; }
+            100% { background-color: #f1f8e9; }
         }
-        
-        .blink {
-            animation: blink 0.5s linear 4;
-        }
-        /* Modal for encouragement after Scenario 1 threshold (3 cards) */
-        
-        #modal {
+        .blink { animation: blink 0.5s linear 4; }
+        /* Modal styles */
+        #modal, #finalModal {
             display: none;
             position: fixed;
             top: 0;
@@ -216,29 +158,7 @@
             background: rgba(0, 0, 0, 0.5);
             z-index: 2000;
         }
-        
-        #modal-content {
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            max-width: 300px;
-            margin: 200px auto;
-            text-align: center;
-        }
-        /* Final Modal for educational final message */
-        
-        #finalModal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 3000;
-        }
-        
-        #finalModalContent {
+        #modal-content, #finalModalContent {
             background: #fff;
             padding: 20px;
             border-radius: 8px;
@@ -246,16 +166,13 @@
             margin: 150px auto;
             text-align: center;
         }
-        /* Responsive design for small 10-inch screens */
-        
+        /* Responsive design */
         @media (max-width: 800px) {
             .scenario {
                 width: 90%;
                 margin: 10px auto;
             }
-            #start-screen h1 {
-                font-size: 2em;
-            }
+            #start-screen h1 { font-size: 2em; }
             #controls button {
                 font-size: 18px;
                 padding: 12px 24px;
@@ -263,9 +180,8 @@
         }
     </style>
 </head>
-
 <body>
-    <!-- Always-visible header with Restart button -->
+    <!-- Header with Restart button -->
     <header>
         <button id="restart-button">Restart</button>
     </header>
@@ -273,10 +189,10 @@
     <!-- Start Screen -->
     <div id="start-screen">
         <h1>Welcome to SIM Mateo</h1>
-        <p>Where you visualize the percentage of clean energy used.<br> Each green card represents 10% of clean energy used.
+        <p>Where you visualize the percentage of clean energy used.<br>
+           Each green card represents 10% of clean energy used.
         </p>
         <img src="simmateo.png" alt="SIM Mateo" style="max-width:90%; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.2); margin-bottom:20px;">
-        <!-- Start button is fixed at top left -->
         <button id="start-button">Start</button>
     </div>
 
@@ -291,24 +207,20 @@
             <div id="scenario1" class="scenario">
                 <h2>Scenario 1: California</h2>
                 <p>Guess the percentage of clean energy California is using?</p>
-                <div class="cards-container" id="cards-ca">
-                    <!-- Cards will be generated here -->
-                </div>
+                <div class="cards-container" id="cards-ca"></div>
                 <div class="message" id="message-ca"></div>
             </div>
             <!-- Scenario 2: San Mateo County -->
             <div id="scenario2" class="scenario">
                 <h2>Scenario 2: San Mateo County</h2>
                 <p>Now guess the percentage of clean energy San Mateo County is using</p>
-                <div class="cards-container" id="cards-sm">
-                    <!-- Cards will be generated here -->
-                </div>
+                <div class="cards-container" id="cards-sm"></div>
                 <div class="message" id="message-sm"></div>
             </div>
         </div>
     </div>
 
-    <!-- Modal for encouragement after reaching 3 cards in Scenario 1 -->
+    <!-- Modal for encouragement after Scenario 1 -->
     <div id="modal">
         <div id="modal-content">
             <h2>Congratulations!</h2>
@@ -317,12 +229,14 @@
         </div>
     </div>
 
-    <!-- Final Modal for final educational message -->
+    <!-- Final Modal for educational message -->
     <div id="finalModal">
         <div id="finalModalContent">
             <h2>Congratulations!</h2>
             <p>
-                You have completed the challenge! Renewable energy is essential for a sustainable future. Clean energy reduces greenhouse gas emissions, improves air quality, and creates green jobs. Keep learning about renewable energy and help build a better tomorrow!
+                You have completed the challenge! Renewable energy is essential for a sustainable future.
+                Clean energy reduces greenhouse gas emissions, improves air quality, and creates green jobs.
+                Keep learning about renewable energy and help build a better tomorrow!
             </p>
             <button id="play-again">Play Again</button>
         </div>
@@ -356,121 +270,96 @@
         const finalModal = document.getElementById('finalModal');
         const playAgainButton = document.getElementById('play-again');
 
-        // Helper function for button click animation
+        // Helper: animate button click
         function animateButton(button) {
             button.classList.add('button-click');
-            setTimeout(() => {
-                button.classList.remove('button-click');
-            }, 200);
+            setTimeout(() => button.classList.remove('button-click'), 200);
         }
 
-        // Helper function to animate any element with a given animation class
+        // Helper: animate any element with a given animation class
         function animateElement(element, animationClass, duration = 500) {
             element.classList.add(animationClass);
-            setTimeout(() => {
-                element.classList.remove(animationClass);
-            }, duration);
+            setTimeout(() => element.classList.remove(animationClass), duration);
         }
 
-        // Function to create a set of cards in a given container.
-        // total is fixed at 10 cards.
+        // Create cards for a given container
         function createCards(container, greenCount, total = 10) {
             container.innerHTML = '';
             for (let i = 0; i < total; i++) {
                 const card = document.createElement('div');
                 card.classList.add('card');
-                if (i < greenCount) {
-                    card.classList.add('green');
-                }
+                if (i < greenCount) card.classList.add('green');
                 container.appendChild(card);
             }
         }
 
-        // Function to show the encouragement modal (after reaching 3 cards)
-        function showModal() {
-            modal.style.display = 'block';
-        }
-        // Function to hide the encouragement modal
-        function hideModal() {
-            modal.style.display = 'none';
-        }
+        // Show/hide modals
+        function showModal() { modal.style.display = 'block'; }
+        function hideModal() { modal.style.display = 'none'; }
         modalClose.addEventListener('click', hideModal);
 
-        // Function to show the final modal (after reaching 9 cards)
-        function showFinalModal() {
-            finalModal.style.display = 'block';
-        }
-        // Function to hide the final modal
-        function hideFinalModal() {
-            finalModal.style.display = 'none';
-        }
+        function showFinalModal() { finalModal.style.display = 'block'; }
+        function hideFinalModal() { finalModal.style.display = 'none'; }
         playAgainButton.addEventListener('click', () => {
             hideFinalModal();
             resetExhibit();
         });
 
-        // Update the display based on the current cardCount.
+        // Update UI based on cardCount
         function updateUI() {
-            // Scenario 1 (California): once cardCount reaches 3, lock the display at 3 green cards.
+            // Scenario 1: lock at 3 cards maximum
             let caGreen = cardCount >= 3 ? 3 : cardCount;
             createCards(cardsCA, caGreen);
 
-            // Scenario 2 (San Mateo County): effective green cards = cardCount - 3 (if > 3; else 0).
+            // Scenario 2: effective cards = cardCount - 3
             let smGreen = cardCount > 3 ? cardCount - 3 : 0;
             createCards(cardsSM, smGreen);
 
-            // Update messages for Scenario 1 (California)
+            // Update messages for Scenario 1
             if (cardCount === 1) {
                 messageCA.textContent = "CA has reached 10% clean energy at 2003!";
                 scenario1Sound.play();
                 animateElement(messageCA, 'button-click', 300);
             } else if (cardCount === 3) {
-                messageCA.textContent = "That's right! California currently uses about 35% of clean electricity (energy)";
+                messageCA.textContent = "That's right! California currently uses about 35% clean electricity.";
                 scenario1Sound.play();
                 scenario1Div.classList.add('blink');
-                setTimeout(() => {
-                    scenario1Div.classList.remove('blink');
-                }, 2000);
-                // Show encouragement modal after reaching 3 cards
+                setTimeout(() => scenario1Div.classList.remove('blink'), 2000);
                 setTimeout(showModal, 500);
             } else {
                 messageCA.textContent = "";
             }
 
-            // Update messages for Scenario 2 (San Mateo County)
+            // Update messages for Scenario 2
             if (cardCount >= 6 && cardCount < 9) {
                 messageSM.textContent = "You're getting close! San Mateo reached 60% clean electricity in 2020";
                 scenario2Sound.play();
                 animateElement(messageSM, 'button-click', 300);
             } else if (cardCount === 9) {
-                messageSM.textContent = "You got it! San Mateo receives our electricity from our local community choice aggregator which serves 100% clean electricity, we are leading the nation!";
+                messageSM.textContent = "You got it! San Mateo serves 100% clean electricity – leading the nation!";
                 scenario2Sound.play();
                 animateElement(messageSM, 'button-click', 300);
-                // Show final modal with educational message after a short delay
                 setTimeout(showFinalModal, 1000);
             } else {
                 messageSM.textContent = "";
             }
         }
 
-        // Function to reset the exhibit to its initial state
+        // Reset the exhibit
         function resetExhibit() {
             cardCount = 0;
             maxCount = 0;
-            // Show start screen and hide main screen
             startScreen.style.display = 'block';
             mainScreen.style.display = 'none';
-            // Reset messages and cards
             messageCA.textContent = "";
             messageSM.textContent = "";
             createCards(cardsCA, 0);
             createCards(cardsSM, 0);
-            // Enable buttons
             addCardButton.disabled = false;
             removeCardButton.disabled = false;
         }
 
-        // Start button click handler
+        // Button event handlers
         startButton.addEventListener('click', () => {
             animateButton(startButton);
             clickSound.play();
@@ -479,20 +368,16 @@
             updateUI();
         });
 
-        // Green Card button handler
         addCardButton.addEventListener('click', () => {
             animateButton(addCardButton);
             clickSound.play();
             if (cardCount < 10) {
                 cardCount++;
-                if (cardCount > maxCount) {
-                    maxCount = cardCount;
-                }
+                if (cardCount > maxCount) maxCount = cardCount;
                 updateUI();
             }
         });
 
-        // Red Card button handler
         removeCardButton.addEventListener('click', () => {
             animateButton(removeCardButton);
             clickSound.play();
@@ -508,12 +393,35 @@
             }
         });
 
-        // Restart button handler (always available)
         restartButton.addEventListener('click', resetExhibit);
-
-        // Initialize exhibit on page load
         resetExhibit();
+
+        // --- WebSocket Integration for Arduino Signals ---
+        // This code listens for commands from the Arduino via the Node.js server.
+        // Commands: "start" -> start exhibit, "add" -> add green card, "remove" -> remove card.
+        const socket = new WebSocket(`ws://${location.host}`);
+        socket.onopen = () => {
+            console.log("Connected to SIM Mateo WebSocket server");
+        };
+        socket.onmessage = (event) => {
+            console.log("Received from Arduino:", event.data);
+            const command = event.data.trim().toLowerCase();
+            if (command === "start") {
+                if (startScreen.style.display !== 'none') {
+                    startButton.click();
+                }
+            } else if (command === "add") {
+                addCardButton.click();
+            } else if (command === "remove") {
+                removeCardButton.click();
+            }
+        };
+        socket.onerror = (error) => {
+            console.error("WebSocket error:", error);
+        };
+        socket.onclose = () => {
+            console.log("WebSocket connection closed");
+        };
     </script>
 </body>
-
 </html>
