@@ -396,32 +396,29 @@
         restartButton.addEventListener('click', resetExhibit);
         resetExhibit();
 
-        // --- WebSocket Integration for Arduino Signals ---
-        // This code listens for commands from the Arduino via the Node.js server.
-        // Commands: "start" -> start exhibit, "add" -> add green card, "remove" -> remove card.
-        const socket = new WebSocket(`ws://${location.host}`);
-        socket.onopen = () => {
-            console.log("Connected to SIM Mateo WebSocket server");
-        };
-        socket.onmessage = (event) => {
-            console.log("Received from Arduino:", event.data);
-            const command = event.data.trim().toLowerCase();
-            if (command === "start") {
-                if (startScreen.style.display !== 'none') {
-                    startButton.click();
-                }
-            } else if (command === "add") {
-                addCardButton.click();
-            } else if (command === "remove") {
-                removeCardButton.click();
-            }
-        };
-        socket.onerror = (error) => {
-            console.error("WebSocket error:", error);
-        };
-        socket.onclose = () => {
-            console.log("WebSocket connection closed");
-        };
+          // --- WebSocket Integration for Arduino Signals ---
+    // Listens for "red" or "green" commands to trigger the corresponding card actions.
+    const socket = new WebSocket(`ws://${location.host}`);
+    socket.onopen = () => {
+        console.log("Connected to SIM Mateo WebSocket server");
+    };
+    socket.onmessage = (event) => {
+        console.log("Received from Arduino:", event.data);
+        const command = event.data.trim().toLowerCase();
+        if (command === "red") {
+            // Trigger the red card action (remove card)
+            removeCardButton.click();
+        } else if (command === "green") {
+            // Trigger the green card action (add card)
+            addCardButton.click();
+        }
+    };
+    socket.onerror = (error) => {
+        console.error("WebSocket error:", error);
+    };
+    socket.onclose = () => {
+        console.log("WebSocket connection closed");
+    };
     </script>
 </body>
 </html>

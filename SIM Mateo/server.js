@@ -10,8 +10,8 @@ const port = 80;
 // Serve static files from the current directory
 app.use(express.static('.'));
 
-// Update with your Arduino port name (e.g., "COM11" for Windows)
-const portName = "COM11";
+// Replace with your Arduino port name (e.g., "COM11")
+const portName = "COM12";
 const serialPort = new SerialPort({
   path: portName,
   baudRate: 9600,
@@ -39,14 +39,27 @@ serialPort.on("close", () => {
 // Attach a readline parser
 const parser = serialPort.pipe(new ReadlineParser({ delimiter: "\n" }));
 
-// WebSocket setup: forward Arduino data to the client
+// Message queue for commands if WebSocket is not open
+let messageQueue = [];
+
+// Process incoming serial data and forward commands if exactly "RED" or "GREEN"
 let primaryWs = null;
 parser.on("data", (data) => {
-  console.log(`Received from Arduino: ${data}`);
-  if (primaryWs && primaryWs.readyState === WebSocket.OPEN) {
-    primaryWs.send(data);
-  } else {
-    console.warn("WebSocket not open; data not sent.");
+  const command = data.trim().toUpperCase();
+  console.log(`Received from Arduino: ${command}`);
+  if (command === "RED" || command === "GREEN") {
+    const lowerCmd = command.toLowerCase();
+    if (primaryWs && primaryWs.readyState === WebSocket.OPEN) {
+      // Flush any queued messages before sending the current command
+      if (messageQueue.length > 0) {
+        messageQueue.forEach((msg) => primaryWs.send(msg));
+        messageQueue = [];
+      }
+      primaryWs.send(lowerCmd);
+    } else {
+      console.warn("WebSocket not open; queuing command.");
+      messageQueue.push(lowerCmd);
+    }
   }
 });
 
@@ -60,9 +73,20 @@ wss.on("connection", (ws) => {
   });
   ws.send("Connected to SIM Mateo WebSocket server");
   primaryWs = ws;
+  // Delay flushing queued commands to ensure the client's onmessage handler is ready
+  setTimeout(() => {
+    if (messageQueue.length > 0) {
+      messageQueue.forEach((msg) => {
+        if (ws.readyState === WebSocket.OPEN) {
+          ws.send(msg);
+        }
+      });
+      messageQueue = [];
+    }
+  }, 1000);
 });
 
-// Gracefully close serial port on process termination
+// Gracefully close the serial port on process termination
 process.on("SIGINT", () => {
   console.log("Closing serial port...");
   serialPort.close(() => {

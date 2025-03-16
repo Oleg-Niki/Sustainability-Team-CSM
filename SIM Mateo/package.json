@@ -1,0 +1,19 @@
+{
+    "name": "sim-mateo",
+    "version": "1.0.0",
+    "description": "SIM Mateo Clean Energy Exhibit with Arduino integration",
+    "main": "server.js",
+    "scripts": {
+      "start": "node server.js",
+      "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "Your Name",
+    "license": "ISC",
+    "dependencies": {
+      "express": "^4.21.2",
+      "serialport": "^12.0.0",
+      "@serialport/parser-readline": "^12.0.0",
+      "ws": "^8.18.0"
+    }
+  }
+  
