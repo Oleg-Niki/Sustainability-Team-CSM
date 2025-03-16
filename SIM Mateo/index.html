@@ -398,7 +398,9 @@
 
           // --- WebSocket Integration for Arduino Signals ---
     // Listens for "red" or "green" commands to trigger the corresponding card actions.
-    const socket = new WebSocket(`ws://${location.host}`);
+    //const socket = new WebSocket(`ws://${location.host}`);
+    const socket = new WebSocket("ws://localhost:80");
+
     socket.onopen = () => {
         console.log("Connected to SIM Mateo WebSocket server");
     };
