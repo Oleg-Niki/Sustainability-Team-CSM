@@ -1,20 +1,20 @@
-/* DO NOT FORGET: click.mp3, scenario1.mp3, scenario2.mp3, and wrong.mp3 */
-
 <!DOCTYPE html>
 <html>
 
 <head>
     <meta charset="UTF-8">
     <title>SIM Mateo - Clean Energy Exhibit</title>
+    <!-- Include a decorative font for a classical look -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&display=swap" rel="stylesheet">
     <style>
         /* Base Styles */
         
         body {
             font-family: Arial, sans-serif;
-            text-align: center;
-            background: #e0f7fa;
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            background: #e0f7fa;
+            overflow-x: hidden;
             transition: background 0.5s;
         }
         
@@ -23,6 +23,8 @@
             top: 10px;
             right: 10px;
             z-index: 1000;
+            display: none;
+            /* Shown on instructions & interactive screens */
         }
         
         header button {
@@ -40,63 +42,220 @@
             transform: scale(1.1);
             background-color: #004d40;
         }
-        /* Start button: moved to top left and styled red */
+        /* Start Screen */
         
-        #start-button {
-            position: fixed;
-            top: 10px;
-            left: 10px;
-            background-color: red;
+        #start-screen {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: #e0f7fa;
+            text-align: center;
+            animation: fadeIn 1s forwards;
+        }
+        
+        #start-screen h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 20vh;
+            /* Smaller so text and button fit without scrolling */
+            margin: 0;
+            line-height: 1;
+            color: #333;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        #start-screen button {
+            margin-top: 20px;
+            font-family: 'Cinzel', serif;
+            font-size: 2rem;
+            padding: 20px 40px;
+            background: linear-gradient(45deg, #ff8a00, #e52e71);
             color: #fff;
-            z-index: 1001;
-            padding: 15px 25px;
-            font-size: 18px;
             border: none;
-            border-radius: 5px;
+            border-radius: 50px;
             cursor: pointer;
-            transition: transform 0.2s ease, background-color 0.3s;
+            transition: transform 0.3s, box-shadow 0.3s;
         }
         
-        #start-button:hover {
+        #start-screen button:hover {
             transform: scale(1.1);
-            background-color: darkred;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
         }
-        /* Screens */
+        /* Instruction Container */
         
-        #start-screen,
+        #instruction-container {
+            display: none;
+            height: 100vh;
+            background: #e0f7fa;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            animation: fadeIn 1s forwards;
+        }
+        
+        .instruction-screen {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .instruction-screen img {
+            width: 50%;
+            max-width: 50%;
+            height: auto;
+            margin-bottom: 20px;
+        }
+        
+        .instruction-screen p {
+            font-size: 1.5rem;
+            color: #333;
+            margin: 10px 20px;
+        }
+        
+        #instruction-nav {
+            margin-top: 30px;
+        }
+        
+        #instruction-nav button {
+            font-size: 1.2rem;
+            padding: 10px 20px;
+            margin: 0 10px;
+            background: linear-gradient(45deg, #00796b, #004d40);
+            color: #fff;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        #instruction-nav button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        /* Main Interactive Screen */
+        
         #main-screen {
-            margin: 80px auto 20px;
-            max-width: 800px;
-            background: #fff;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            opacity: 0;
+            display: none;
+            height: 100vh;
+            overflow-y: auto;
             animation: fadeIn 0.5s forwards;
         }
+        /* Controls: Add/Remove Card Buttons */
         
-        @keyframes fadeIn {
-            to {
-                opacity: 1;
-            }
+        #controls {
+            text-align: center;
+            margin: 20px 0;
         }
-        /* Buttons inside the exhibit (controls) */
         
         #controls button {
-            padding: 15px 30px;
-            font-size: 20px;
-            margin: 10px;
-            background-color: #26a69a;
+            font-size: 1.2rem;
+            padding: 10px 20px;
+            margin: 0 10px;
+            background: linear-gradient(45deg, #26a69a, #00796b);
             color: #fff;
             border: none;
-            border-radius: 8px;
+            border-radius: 50px;
             cursor: pointer;
-            transition: transform 0.2s ease, background-color 0.3s;
+            transition: transform 0.3s, box-shadow 0.3s;
         }
         
         #controls button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        /* Scenario Pages */
+        
+        #scenario1-page,
+        #scenario2-page {
+            height: calc(100vh - 80px);
+            /* Adjusting for controls and header */
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: #e0f7fa;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        
+        #scenario1-page .scenario,
+        #scenario2-page .scenario {
+            width: 90%;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 15px;
+            background: #f1f8e9;
+            border: 1px solid #c5e1a5;
+            border-radius: 8px;
+            text-align: left;
+        }
+        
+        #scenario1-page h2,
+        #scenario2-page h2 {
+            color: #558b2f;
+        }
+        
+        .cards-container {
+            display: flex;
+            justify-content: center;
+            margin: 15px 0;
+        }
+        
+        .card {
+            width: 50px;
+            height: 75px;
+            border: 2px solid #555;
+            margin: 5px;
+            background: #e57373;
+            border-radius: 4px;
+            transition: background 0.3s, transform 0.3s;
+        }
+        
+        .card.green {
+            background: #66bb6a;
             transform: scale(1.05);
-            background-color: #00796b;
+        }
+        
+        .message {
+            margin-top: 10px;
+            font-weight: bold;
+            color: #424242;
+        }
+        /* Scenario Navigation */
+        
+        #scenario-nav {
+            margin-top: 20px;
+        }
+        
+        #scenario-nav button {
+            font-size: 1.2rem;
+            padding: 10px 20px;
+            margin: 0 10px;
+            background: linear-gradient(45deg, #00796b, #004d40);
+            color: #fff;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        #scenario-nav button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
         }
         /* Button click animation */
         
@@ -115,7 +274,6 @@
                 transform: scale(1);
             }
         }
-        /* Shake animation for wrong direction */
         
         .shake {
             animation: shake 0.5s;
@@ -138,77 +296,10 @@
                 transform: translateX(0);
             }
         }
-        /* Card styles */
+        /* Modal styles remain unchanged */
         
-        .cards-container {
-            display: flex;
-            justify-content: center;
-            margin: 15px 0;
-        }
-        
-        .card {
-            width: 50px;
-            height: 75px;
-            border: 2px solid #555;
-            margin: 5px;
-            background: #e57373;
-            /* red tone */
-            border-radius: 4px;
-            transition: background 0.3s, transform 0.3s;
-        }
-        
-        .card.green {
-            background: #66bb6a;
-            transform: scale(1.05);
-        }
-        /* Scenario containers */
-        
-        #scenarios {
-            display: flex;
-            justify-content: space-around;
-            flex-wrap: wrap;
-        }
-        
-        .scenario {
-            width: 45%;
-            padding: 15px;
-            background: #f1f8e9;
-            border: 1px solid #c5e1a5;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .scenario h2 {
-            color: #558b2f;
-        }
-        
-        .message {
-            margin-top: 10px;
-            font-weight: bold;
-            color: #424242;
-        }
-        /* Blinking effect for Scenario 1 */
-        
-        @keyframes blink {
-            0% {
-                background-color: #f1f8e9;
-            }
-            50% {
-                background-color: #fff176;
-            }
-            100% {
-                background-color: #f1f8e9;
-            }
-        }
-        
-        .blink {
-            animation: blink 0.5s linear 4;
-        }
-        /* Modal for encouragement after Scenario 1 threshold (3 cards) */
-        
-        #modal {
+        #modal,
+        #finalModal {
             display: none;
             position: fixed;
             top: 0;
@@ -219,27 +310,7 @@
             z-index: 2000;
         }
         
-        #modal-content {
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            max-width: 300px;
-            margin: 200px auto;
-            text-align: center;
-        }
-        /* Final Modal for educational final message */
-        
-        #finalModal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 3000;
-        }
-        
+        #modal-content,
         #finalModalContent {
             background: #fff;
             padding: 20px;
@@ -248,69 +319,90 @@
             margin: 150px auto;
             text-align: center;
         }
-        /* Responsive design for small 10-inch screens */
         
         @media (max-width: 800px) {
-            .scenario {
-                width: 90%;
-                margin: 10px auto;
-            }
             #start-screen h1 {
-                font-size: 2em;
+                font-size: 15vh;
             }
-            #controls button {
-                font-size: 18px;
-                padding: 12px 24px;
+            .instruction-screen p {
+                font-size: 1.2rem;
+            }
+            #scenario1-page .scenario,
+            #scenario2-page .scenario {
+                width: 95%;
             }
         }
     </style>
 </head>
 
 <body>
-    <!-- Always-visible header with Restart button -->
-    <header>
+    <!-- Header with Restart button (visible on instructions and interactive screens) -->
+    <header id="header">
         <button id="restart-button">Restart</button>
     </header>
 
     <!-- Start Screen -->
     <div id="start-screen">
-        <h1>Welcome to SIM Mateo</h1>
-        <p>Where you visualize the percentage of clean energy used.<br> Each green card represents 10% of clean energy used.
-        </p>
-        <img src="simmateo.png" alt="SIM Mateo" style="max-width:90%; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.2); margin-bottom:20px;">
-        <!-- Start button is fixed at top left -->
-        <button id="start-button">Start</button>
+        <h1>WELCOME TO SIM MATEO</h1>
+        <button id="start-button">START</button>
+    </div>
+
+    <!-- Instruction Container -->
+    <div id="instruction-container">
+        <!-- Instruction Screen 1 -->
+        <div id="instruction-screen-1" class="instruction-screen">
+            <img src="instructions1.png" alt="Instruction 1">
+            <p>Each green card represents 10% of clean electricity.</p>
+        </div>
+        <!-- Instruction Screen 2 -->
+        <div id="instruction-screen-2" class="instruction-screen">
+            <img src="instructions2.png" alt="Instruction 2">
+            <p>Each red card represents 10% of traditional carbon‑intensive energy.</p>
+        </div>
+        <!-- Instruction Screen 3 -->
+        <div id="instruction-screen-3" class="instruction-screen">
+            <img src="instructions3.png" alt="Instruction 3">
+            <p>Tap each card on SIM Mateo's generator to visualize the amount of clean electricity the area is using.</p>
+        </div>
+        <!-- Navigation for instructions -->
+        <div id="instruction-nav">
+            <button id="instruction-back">Back</button>
+            <button id="instruction-next">Next</button>
+        </div>
     </div>
 
     <!-- Main Interactive Screen -->
-    <div id="main-screen" style="display: none;">
+    <div id="main-screen">
+        <!-- Controls: Add/Remove Cards (visible on both scenario pages) -->
         <div id="controls">
             <button id="add-card">Green Card</button>
             <button id="remove-card">Red Card</button>
         </div>
-        <div id="scenarios">
-            <!-- Scenario 1: California -->
-            <div id="scenario1" class="scenario">
-                <h2>Scenario 1: California</h2>
-                <p>Guess the percentage of clean energy California is using?</p>
-                <div class="cards-container" id="cards-ca">
-                    <!-- Cards will be generated here -->
-                </div>
+        <!-- Scenario 1 Page -->
+        <div id="scenario1-page">
+            <div class="scenario">
+                <h2>What percentage of California's electricity is clean? (e.g. solar, hydro, wind, nuclear)</h2>
+                <div class="cards-container" id="cards-ca"></div>
                 <div class="message" id="message-ca"></div>
             </div>
-            <!-- Scenario 2: San Mateo County -->
-            <div id="scenario2" class="scenario">
-                <h2>Scenario 2: San Mateo County</h2>
-                <p>Now guess the percentage of clean energy San Mateo County is using</p>
-                <div class="cards-container" id="cards-sm">
-                    <!-- Cards will be generated here -->
-                </div>
+            <div id="scenario-nav">
+                <button id="scenario1-next">Next</button>
+            </div>
+        </div>
+        <!-- Scenario 2 Page -->
+        <div id="scenario2-page" style="display: none;">
+            <div class="scenario">
+                <h2>What percentage of San Mateo County's electricity is clean?</h2>
+                <div class="cards-container" id="cards-sm"></div>
                 <div class="message" id="message-sm"></div>
+            </div>
+            <div id="scenario-nav">
+                <button id="scenario2-back">Back</button>
             </div>
         </div>
     </div>
 
-    <!-- Modal for encouragement after reaching 3 cards in Scenario 1 -->
+    <!-- Modal for encouragement after Scenario 1 -->
     <div id="modal">
         <div id="modal-content">
             <h2>Congratulations!</h2>
@@ -319,7 +411,7 @@
         </div>
     </div>
 
-    <!-- Final Modal for final educational message -->
+    <!-- Final Modal for educational message -->
     <div id="finalModal">
         <div id="finalModalContent">
             <h2>Congratulations!</h2>
@@ -337,72 +429,74 @@
         const scenario2Sound = new Audio('scenario2.mp3');
         const wrongSound = new Audio('wrong.mp3');
 
-        // Global variables for card count and maximum reached count
+        // Global variable for card count (progress is continuous)
         let cardCount = 0;
-        let maxCount = 0;
+        // Instruction navigation
+        let currentInstruction = 1;
+        const totalInstructions = 3;
 
-        // Get elements
+        // Get elements for instructions and interactive screens
         const startButton = document.getElementById('start-button');
         const startScreen = document.getElementById('start-screen');
+        const instructionContainer = document.getElementById('instruction-container');
+        const instructionScreens = document.getElementsByClassName('instruction-screen');
+        const instructionBack = document.getElementById('instruction-back');
+        const instructionNext = document.getElementById('instruction-next');
         const mainScreen = document.getElementById('main-screen');
+        const header = document.getElementById('header');
+        // Scenario 1 elements
+        const scenario1Page = document.getElementById('scenario1-page');
+        const cardsCA = document.getElementById('cards-ca');
+        const messageCA = document.getElementById('message-ca');
+        const scenario1Next = document.getElementById('scenario1-next');
+        // Scenario 2 elements
+        const scenario2Page = document.getElementById('scenario2-page');
+        const cardsSM = document.getElementById('cards-sm');
+        const messageSM = document.getElementById('message-sm');
+        const scenario2Back = document.getElementById('scenario2-back');
+        // Controls (Add/Remove)
         const addCardButton = document.getElementById('add-card');
         const removeCardButton = document.getElementById('remove-card');
-        const restartButton = document.getElementById('restart-button');
-        const cardsCA = document.getElementById('cards-ca');
-        const cardsSM = document.getElementById('cards-sm');
-        const messageCA = document.getElementById('message-ca');
-        const messageSM = document.getElementById('message-sm');
-        const scenario1Div = document.getElementById('scenario1');
+        // Modal elements
         const modal = document.getElementById('modal');
         const modalClose = document.getElementById('modal-close');
         const finalModal = document.getElementById('finalModal');
         const playAgainButton = document.getElementById('play-again');
 
-        // Helper function for button click animation
+        // Helper: animate button click
         function animateButton(button) {
             button.classList.add('button-click');
-            setTimeout(() => {
-                button.classList.remove('button-click');
-            }, 200);
+            setTimeout(() => button.classList.remove('button-click'), 200);
         }
-
-        // Helper function to animate any element with a given animation class
+        // Helper: animate element
         function animateElement(element, animationClass, duration = 500) {
             element.classList.add(animationClass);
-            setTimeout(() => {
-                element.classList.remove(animationClass);
-            }, duration);
+            setTimeout(() => element.classList.remove(animationClass), duration);
         }
-
-        // Function to create a set of cards in a given container.
-        // total is fixed at 10 cards.
+        // Create cards function
         function createCards(container, greenCount, total = 10) {
             container.innerHTML = '';
             for (let i = 0; i < total; i++) {
                 const card = document.createElement('div');
                 card.classList.add('card');
-                if (i < greenCount) {
-                    card.classList.add('green');
-                }
+                if (i < greenCount) card.classList.add('green');
                 container.appendChild(card);
             }
         }
-
-        // Function to show the encouragement modal (after reaching 3 cards)
+        // Show/hide modals
         function showModal() {
             modal.style.display = 'block';
         }
-        // Function to hide the encouragement modal
+
         function hideModal() {
             modal.style.display = 'none';
         }
         modalClose.addEventListener('click', hideModal);
 
-        // Function to show the final modal (after reaching 9 cards)
         function showFinalModal() {
             finalModal.style.display = 'block';
         }
-        // Function to hide the final modal
+
         function hideFinalModal() {
             finalModal.style.display = 'none';
         }
@@ -410,111 +504,146 @@
             hideFinalModal();
             resetExhibit();
         });
-
-        // Update the display based on the current cardCount.
+        // Update UI: update both scenario pages based on cardCount
         function updateUI() {
-            // Scenario 1 (California): once cardCount reaches 3, lock the display at 3 green cards.
-            let caGreen = cardCount >= 3 ? 3 : cardCount;
+            // Scenario 1: Up to 3 cards (for California)
+            let caGreen = cardCount <= 3 ? cardCount : 3;
             createCards(cardsCA, caGreen);
-
-            // Scenario 2 (San Mateo County): effective green cards = cardCount - 3 (if > 3; else 0).
-            let smGreen = cardCount > 3 ? cardCount - 3 : 0;
-            createCards(cardsSM, smGreen);
-
-            // Update messages for Scenario 1 (California)
             if (cardCount === 1) {
                 messageCA.textContent = "CA has reached 10% clean energy at 2003!";
                 scenario1Sound.play();
                 animateElement(messageCA, 'button-click', 300);
             } else if (cardCount === 3) {
-                messageCA.textContent = "That's right! California currently uses about 35% of clean electricity (energy)";
+                messageCA.textContent = "That's right! California currently uses about 35% clean electricity.";
                 scenario1Sound.play();
-                scenario1Div.classList.add('blink');
-                setTimeout(() => {
-                    scenario1Div.classList.remove('blink');
-                }, 2000);
-                // Show encouragement modal after reaching 3 cards
                 setTimeout(showModal, 500);
             } else {
                 messageCA.textContent = "";
             }
-
-            // Update messages for Scenario 2 (San Mateo County)
+            // Scenario 2: Remaining cards (for San Mateo County)
+            let smGreen = cardCount > 3 ? cardCount - 3 : 0;
+            createCards(cardsSM, smGreen);
             if (cardCount >= 6 && cardCount < 9) {
                 messageSM.textContent = "You're getting close! San Mateo reached 60% clean electricity in 2020";
                 scenario2Sound.play();
                 animateElement(messageSM, 'button-click', 300);
             } else if (cardCount === 9) {
-                messageSM.textContent = "You got it! San Mateo receives our electricity from our local community choice aggregator which serves 100% clean electricity, we are leading the nation!";
+                messageSM.textContent = "You got it! San Mateo serves 100% clean electricity – leading the nation!";
                 scenario2Sound.play();
                 animateElement(messageSM, 'button-click', 300);
-                // Show final modal with educational message after a short delay
                 setTimeout(showFinalModal, 1000);
             } else {
                 messageSM.textContent = "";
             }
         }
-
-        // Function to reset the exhibit to its initial state
+        // Reset exhibit: go back to start screen
         function resetExhibit() {
             cardCount = 0;
-            maxCount = 0;
-            // Show start screen and hide main screen
-            startScreen.style.display = 'block';
             mainScreen.style.display = 'none';
-            // Reset messages and cards
+            instructionContainer.style.display = 'none';
+            startScreen.style.display = 'flex';
+            header.style.display = 'none';
             messageCA.textContent = "";
             messageSM.textContent = "";
             createCards(cardsCA, 0);
             createCards(cardsSM, 0);
-            // Enable buttons
-            addCardButton.disabled = false;
-            removeCardButton.disabled = false;
+        }
+        // Instruction navigation functions
+        function showInstructionScreen(index) {
+            currentInstruction = index;
+            for (let i = 0; i < instructionScreens.length; i++) {
+                instructionScreens[i].style.display = 'none';
+            }
+            document.getElementById('instruction-screen-' + index).style.display = 'flex';
+            instructionBack.style.display = (index === 1) ? 'none' : 'inline-block';
+            instructionNext.textContent = (index === totalInstructions) ? 'Continue' : 'Next';
+        }
+        instructionBack.addEventListener('click', () => {
+            animateButton(instructionBack);
+            if (currentInstruction > 1) {
+                showInstructionScreen(currentInstruction - 1);
+            }
+        });
+        instructionNext.addEventListener('click', () => {
+            animateButton(instructionNext);
+            if (currentInstruction < totalInstructions) {
+                showInstructionScreen(currentInstruction + 1);
+            } else {
+                instructionContainer.style.display = 'none';
+                mainScreen.style.display = 'block';
+                showScenario1();
+                updateUI();
+            }
+        });
+        // Scenario navigation functions
+        function showScenario1() {
+            scenario1Page.style.display = 'flex';
+            scenario2Page.style.display = 'none';
         }
 
-        // Start button click handler
+        function showScenario2() {
+            scenario1Page.style.display = 'none';
+            scenario2Page.style.display = 'flex';
+        }
+        // Event handlers
         startButton.addEventListener('click', () => {
             animateButton(startButton);
             clickSound.play();
             startScreen.style.display = 'none';
-            mainScreen.style.display = 'block';
-            updateUI();
+            header.style.display = 'block';
+            instructionContainer.style.display = 'flex';
+            showInstructionScreen(1);
         });
-
-        // Green Card button handler
+        scenario1Next.addEventListener('click', () => {
+            animateButton(scenario1Next);
+            clickSound.play();
+            showScenario2();
+        });
+        scenario2Back.addEventListener('click', () => {
+            animateButton(scenario2Back);
+            clickSound.play();
+            showScenario1();
+        });
+        // Interactive card buttons (controls)
         addCardButton.addEventListener('click', () => {
             animateButton(addCardButton);
             clickSound.play();
             if (cardCount < 10) {
                 cardCount++;
-                if (cardCount > maxCount) {
-                    maxCount = cardCount;
-                }
                 updateUI();
             }
         });
-
-        // Red Card button handler
         removeCardButton.addEventListener('click', () => {
             animateButton(removeCardButton);
             clickSound.play();
             if (cardCount > 0) {
                 cardCount--;
-                if (maxCount > 3 && cardCount < maxCount) {
-                    messageSM.textContent = "Wrong direction";
-                    wrongSound.play();
-                    animateElement(messageSM, 'shake', 500);
-                    maxCount = cardCount;
-                }
                 updateUI();
             }
         });
-
-        // Restart button handler (always available)
         restartButton.addEventListener('click', resetExhibit);
-
-        // Initialize exhibit on page load
         resetExhibit();
+
+        // --- WebSocket Integration for Arduino Signals ---
+        const socket = new WebSocket("ws://localhost:80");
+        socket.onopen = () => {
+            console.log("Connected to SIM Mateo WebSocket server");
+        };
+        socket.onmessage = (event) => {
+            console.log("Received from Arduino:", event.data);
+            const command = event.data.trim().toLowerCase();
+            if (command === "red") {
+                removeCardButton.click();
+            } else if (command === "green") {
+                addCardButton.click();
+            }
+        };
+        socket.onerror = (error) => {
+            console.error("WebSocket error:", error);
+        };
+        socket.onclose = () => {
+            console.log("WebSocket connection closed");
+        };
     </script>
 </body>
 
