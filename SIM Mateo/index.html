@@ -424,10 +424,11 @@
 
     <script>
         // Sound effects (ensure these files are in the same folder)
-        const clickSound = new Audio('click.mp3');
+        const clickSound = new Audio('WindowsNavigationStart.wav');
         const scenario1Sound = new Audio('scenario1.mp3');
         const scenario2Sound = new Audio('scenario2.mp3');
         const wrongSound = new Audio('wrong.mp3');
+        const welcomeSound = new Audio('welcomeSound.mp3')
 
         // Global variable for card count (progress is continuous)
         let cardCount = 0;
@@ -589,6 +590,7 @@
         startButton.addEventListener('click', () => {
             animateButton(startButton);
             clickSound.play();
+            welcomeSound.play();
             startScreen.style.display = 'none';
             header.style.display = 'block';
             instructionContainer.style.display = 'flex';
