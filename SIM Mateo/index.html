@@ -58,7 +58,7 @@
         #start-screen h1 {
             font-family: 'Cinzel', serif;
             font-size: 20vh;
-            /* Smaller so text and button fit without scrolling */
+            /* Adjusted so text and button fit without scrolling */
             margin: 0;
             line-height: 1;
             color: #333;
@@ -88,7 +88,6 @@
             display: none;
             height: 100vh;
             background: #e0f7fa;
-            display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
@@ -296,7 +295,7 @@
                 transform: translateX(0);
             }
         }
-        /* Modal styles remain unchanged */
+        /* Modal styles */
         
         #modal,
         #finalModal {
@@ -402,7 +401,7 @@
         </div>
     </div>
 
-    <!-- Modal for encouragement after Scenario 1 -->
+    <!-- Modal for Scenario 1 congratulatory popup -->
     <div id="modal">
         <div id="modal-content">
             <h2>Congratulations!</h2>
@@ -411,7 +410,7 @@
         </div>
     </div>
 
-    <!-- Final Modal for educational message -->
+    <!-- Final Modal for educational message (Scenario 2 congratulatory popup) -->
     <div id="finalModal">
         <div id="finalModalContent">
             <h2>Congratulations!</h2>
@@ -424,15 +423,20 @@
 
     <script>
         // Sound effects (ensure these files are in the same folder)
-        const clickSound = new Audio('WindowsNavigationStart.wav');
-        const scenario1Sound = new Audio('scenario1.mp3');
-        const scenario2Sound = new Audio('scenario2.mp3');
-        const wrongSound = new Audio('wrong.mp3');
-        const welcomeSound = new Audio('welcomeSound.mp3')
+        const clickSound = new Audio('SoundWindowsNavigationStart.wav');
+        const scenarioCASound_10 = new Audio('SoundScenarioCA_10.mp3');
+        const scenarioCASound_win = new Audio('SoundScenarioCA_win.mp3');
+        const scenarioSMCSound_Start = new Audio('SoundScenarioSMC_Start.mp3');
+        const scenarioSMCSound_60 = new Audio('SoundScenarioSMC_60.mp3');
+        const scenarioSMCSound_win = new Audio('SoundScenarioSMC_win.mp3');
+        const wrongSound = new Audio('SoundWindowsCriticalStop.mp3');
+        const welcomeSound = new Audio('SoundWelcome.mp3');
 
         // Global variable for card count (progress is continuous)
+        // Start with cardCount = 0 (Scenario 1 starts at 0)
         let cardCount = 0;
-        // Instruction navigation
+
+        // Instruction navigation variables
         let currentInstruction = 1;
         const totalInstructions = 3;
 
@@ -445,6 +449,8 @@
         const instructionNext = document.getElementById('instruction-next');
         const mainScreen = document.getElementById('main-screen');
         const header = document.getElementById('header');
+        const restartButton = document.getElementById('restart-button');
+
         // Scenario 1 elements
         const scenario1Page = document.getElementById('scenario1-page');
         const cardsCA = document.getElementById('cards-ca');
@@ -492,7 +498,14 @@
         function hideModal() {
             modal.style.display = 'none';
         }
-        modalClose.addEventListener('click', hideModal);
+        modalClose.addEventListener('click', () => {
+            hideModal();
+            // Automatic transition: if we are in Scenario 1, then switch to Scenario 2.
+            if (scenario1Page.style.display !== 'none') {
+                showScenario2();
+                scenarioSMCSound_Start.play();
+            }
+        });
 
         function showFinalModal() {
             finalModal.style.display = 'block';
@@ -505,50 +518,68 @@
             hideFinalModal();
             resetExhibit();
         });
+
         // Update UI: update both scenario pages based on cardCount
         function updateUI() {
-            // Scenario 1: Up to 3 cards (for California)
+            // Scenario 1: display up to 3 cards (for California)
             let caGreen = cardCount <= 3 ? cardCount : 3;
             createCards(cardsCA, caGreen);
-            if (cardCount === 1) {
-                messageCA.textContent = "CA has reached 10% clean energy at 2003!";
-                scenario1Sound.play();
-                animateElement(messageCA, 'button-click', 300);
-            } else if (cardCount === 3) {
-                messageCA.textContent = "That's right! California currently uses about 35% clean electricity.";
-                scenario1Sound.play();
-                setTimeout(showModal, 500);
-            } else {
-                messageCA.textContent = "";
+            if (scenario1Page.style.display !== 'none') {
+                if (cardCount === 1) {
+                    messageCA.textContent = "CA has reached 10% clean energy at 2003!";
+                    scenarioCASound_10.play();
+                    animateElement(messageCA, 'button-click', 300);
+                } else if (cardCount === 3) {
+                    messageCA.textContent = "That's right! California state currently uses about 35% clean electricity.";
+                    scenarioCASound_win.play();
+                    setTimeout(showModal, 500);
+                } else {
+                    messageCA.textContent = "";
+                }
             }
-            // Scenario 2: Remaining cards (for San Mateo County)
-            let smGreen = cardCount > 3 ? cardCount - 3 : 0;
+            // Scenario 2: display progress as the full cardCount if cardCount is at least 3.
+            let smGreen = cardCount >= 3 ? cardCount : 0;
             createCards(cardsSM, smGreen);
-            if (cardCount >= 6 && cardCount < 9) {
+            if (cardCount === 6) {
                 messageSM.textContent = "You're getting close! San Mateo reached 60% clean electricity in 2020";
-                scenario2Sound.play();
+                scenarioSMCSound_60.play();
                 animateElement(messageSM, 'button-click', 300);
             } else if (cardCount === 9) {
                 messageSM.textContent = "You got it! San Mateo serves 100% clean electricity – leading the nation!";
-                scenario2Sound.play();
+                scenarioSMCSound_win.play();
                 animateElement(messageSM, 'button-click', 300);
                 setTimeout(showFinalModal, 1000);
             } else {
                 messageSM.textContent = "";
             }
         }
-        // Reset exhibit: go back to start screen
+        // Reset exhibit: bring user back to the welcome (start) screen and start everything from scratch.
         function resetExhibit() {
+            // Reset progress and navigation variables
             cardCount = 0;
-            mainScreen.style.display = 'none';
+            currentInstruction = 1;
+
+            // Hide interactive screens and modals
             instructionContainer.style.display = 'none';
-            startScreen.style.display = 'flex';
+            mainScreen.style.display = 'none';
+            scenario1Page.style.display = 'none';
+            scenario2Page.style.display = 'none';
+            modal.style.display = 'none';
+            finalModal.style.display = 'none';
+
+            // Hide the header (Restart button) so it won't appear on the welcome screen
             header.style.display = 'none';
+
+            // Clear any messages and progress bars
             messageCA.textContent = "";
             messageSM.textContent = "";
             createCards(cardsCA, 0);
             createCards(cardsSM, 0);
+
+            // Show the start screen (welcome screen)
+            startScreen.style.display = 'flex';
         }
+
         // Instruction navigation functions
         function showInstructionScreen(index) {
             currentInstruction = index;
@@ -618,11 +649,26 @@
         removeCardButton.addEventListener('click', () => {
             animateButton(removeCardButton);
             clickSound.play();
-            if (cardCount > 0) {
-                cardCount--;
-                updateUI();
+
+            // Store the current card count before subtracting.
+            let current = cardCount;
+
+            // In Scenario 1: play wrong sound only if current is 0 (red pressed first) or 2 (removing after 2 green).
+            if (scenario1Page.style.display !== 'none') {
+                if (current === 0 || current === 2) {
+                    wrongSound.play();
+                }
             }
+            // In Scenario 2: every removal should play the wrong sound.
+            else if (scenario2Page.style.display !== 'none') {
+                wrongSound.play();
+            }
+
+            // Subtract one from cardCount, but don't allow it to go below 0.
+            cardCount = Math.max(0, cardCount - 1);
+            updateUI();
         });
+
         restartButton.addEventListener('click', resetExhibit);
         resetExhibit();
 
