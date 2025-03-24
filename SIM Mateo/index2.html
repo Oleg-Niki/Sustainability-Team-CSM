@@ -1,700 +1,631 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-    <meta charset="UTF-8">
-    <title>SIM Mateo - Clean Energy Exhibit</title>
-    <!-- Include a decorative font for a classical look -->
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&display=swap" rel="stylesheet">
-    <style>
-        /* Base Styles */
-        
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background: #e0f7fa;
-            overflow-x: hidden;
-            transition: background 0.5s;
-        }
-        
-        header {
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            z-index: 1000;
-            display: none;
-            /* Shown on instructions & interactive screens */
-        }
-        
-        header button {
-            padding: 15px 25px;
-            font-size: 18px;
-            background-color: #00796b;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: transform 0.2s ease, background-color 0.3s;
-        }
-        
-        header button:hover {
-            transform: scale(1.1);
-            background-color: #004d40;
-        }
-        /* Start Screen */
-        
-        #start-screen {
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            background: #e0f7fa;
-            text-align: center;
-            animation: fadeIn 1s forwards;
-        }
-        
-        #start-screen h1 {
-            font-family: 'Cinzel', serif;
-            font-size: 20vh;
-            margin: 0;
-            line-height: 1;
-            color: #333;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-        }
-        
-        #start-screen button {
-            margin-top: 20px;
-            font-family: 'Cinzel', serif;
-            font-size: 2rem;
-            padding: 20px 40px;
-            background: linear-gradient(45deg, #ff8a00, #e52e71);
-            color: #fff;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-        
-        #start-screen button:hover {
-            transform: scale(1.1);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-        }
-        /* Instruction Container */
-        
-        #instruction-container {
-            display: none;
-            height: 100vh;
-            background: #e0f7fa;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            animation: fadeIn 1s forwards;
-        }
-        
-        .instruction-screen {
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .instruction-screen img {
-            width: 50%;
-            max-width: 50%;
-            height: auto;
-            margin-bottom: 20px;
-        }
-        
-        .instruction-screen p {
-            font-size: 1.5rem;
-            color: #333;
-            margin: 10px 20px;
-        }
-        
-        #instruction-nav {
-            margin-top: 30px;
-        }
-        
-        #instruction-nav button {
-            font-size: 1.2rem;
-            padding: 10px 20px;
-            margin: 0 10px;
-            background: linear-gradient(45deg, #00796b, #004d40);
-            color: #fff;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-        
-        #instruction-nav button:hover {
-            transform: scale(1.1);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-        }
-        /* Main Interactive Screen */
-        
-        #main-screen {
-            display: none;
-            height: 100vh;
-            overflow-y: auto;
-            animation: fadeIn 0.5s forwards;
-        }
-        /* Controls: Add/Remove Card Buttons */
-        
-        #controls {
-            text-align: center;
-            margin: 20px 0;
-        }
-        
-        #controls button {
-            font-size: 1.2rem;
-            padding: 10px 20px;
-            margin: 0 10px;
-            background: linear-gradient(45deg, #26a69a, #00796b);
-            color: #fff;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-        
-        #controls button:hover {
-            transform: scale(1.1);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-        }
-        /* Scenario Pages */
-        
-        #scenario1-page,
-        #scenario2-page {
-            height: calc(100vh - 80px);
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            background: #e0f7fa;
-            text-align: center;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-        
-        #scenario1-page .scenario,
-        #scenario2-page .scenario {
-            width: 90%;
-            max-width: 800px;
-            margin: 20px auto;
-            padding: 15px;
-            background: #f1f8e9;
-            border: 1px solid #c5e1a5;
-            border-radius: 8px;
-            text-align: left;
-        }
-        
-        #scenario1-page h2,
-        #scenario2-page h2 {
-            color: #558b2f;
-        }
-        
-        .cards-container {
-            display: flex;
-            justify-content: center;
-            margin: 15px 0;
-        }
-        
-        .card {
-            width: 50px;
-            height: 75px;
-            border: 2px solid #555;
-            margin: 5px;
-            background: #e57373;
-            border-radius: 4px;
-            transition: background 0.3s, transform 0.3s;
-        }
-        
-        .card.green {
-            background: #66bb6a;
-            transform: scale(1.05);
-        }
-        
-        .message {
-            margin-top: 10px;
-            font-weight: bold;
-            color: #424242;
-        }
-        /* Scenario Navigation */
-        
-        #scenario-nav {
-            margin-top: 20px;
-        }
-        
-        #scenario-nav button {
-            font-size: 1.2rem;
-            padding: 10px 20px;
-            margin: 0 10px;
-            background: linear-gradient(45deg, #00796b, #004d40);
-            color: #fff;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-        
-        #scenario-nav button:hover {
-            transform: scale(1.1);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-        }
-        
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
-        }
-        /* Button click animation */
-        
-        .button-click {
-            animation: pop 0.2s ease;
-        }
-        
-        @keyframes pop {
-            0% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(0.9);
-            }
-            100% {
-                transform: scale(1);
-            }
-        }
-        
-        .shake {
-            animation: shake 0.5s;
-        }
-        
-        @keyframes shake {
-            0% {
-                transform: translateX(0);
-            }
-            25% {
-                transform: translateX(-5px);
-            }
-            50% {
-                transform: translateX(5px);
-            }
-            75% {
-                transform: translateX(-5px);
-            }
-            100% {
-                transform: translateX(0);
-            }
-        }
-        /* Modal styles */
-        
-        #modal,
-        #finalModal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 2000;
-        }
-        
-        #modal-content,
-        #finalModalContent {
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            max-width: 350px;
-            margin: 150px auto;
-            text-align: center;
-        }
-        
-        @media (max-width: 800px) {
-            #start-screen h1 {
-                font-size: 15vh;
-            }
-            .instruction-screen p {
-                font-size: 1.2rem;
-            }
-            #scenario1-page .scenario,
-            #scenario2-page .scenario {
-                width: 95%;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>SIM Mateo - Clean Energy Exhibit</title>
+  <!-- Include a decorative font for a classical look -->
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&display=swap" rel="stylesheet">
+  <style>
+    /* Base Styles */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #e0f7fa;
+      overflow-x: hidden;
+      transition: background 0.5s;
+    }
+    header {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      z-index: 1000;
+      display: none; /* Shown on instructions & interactive screens */
+    }
+    header button {
+      padding: 15px 25px;
+      font-size: 18px;
+      background-color: #00796b;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: transform 0.2s ease, background-color 0.3s;
+    }
+    header button:hover {
+      transform: scale(1.1);
+      background-color: #004d40;
+    }
+    /* Start Screen */
+    #start-screen {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: #e0f7fa;
+      text-align: center;
+      animation: fadeIn 1s forwards;
+    }
+    #start-screen h1 {
+      font-family: 'Cinzel', serif;
+      font-size: 20vh;
+      margin: 0;
+      line-height: 1;
+      color: #333;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+    #start-screen button {
+      margin-top: 20px;
+      font-family: 'Cinzel', serif;
+      font-size: 2rem;
+      padding: 20px 40px;
+      background: linear-gradient(45deg, #ff8a00, #e52e71);
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    #start-screen button:hover {
+      transform: scale(1.1);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+    /* Instruction Container */
+    #instruction-container {
+      display: none;
+      height: 100vh;
+      background: #e0f7fa;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      animation: fadeIn 1s forwards;
+    }
+    .instruction-screen {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    .instruction-screen img {
+      width: 50%;
+      max-width: 50%;
+      height: auto;
+      margin-bottom: 20px;
+    }
+    .instruction-screen p {
+      font-size: 1.5rem;
+      color: #333;
+      margin: 10px 20px;
+    }
+    #instruction-nav {
+      margin-top: 30px;
+    }
+    #instruction-nav button {
+      font-size: 1.2rem;
+      padding: 10px 20px;
+      margin: 0 10px;
+      background: linear-gradient(45deg, #00796b, #004d40);
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    #instruction-nav button:hover {
+      transform: scale(1.1);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+    /* Main Interactive Screen */
+    #main-screen {
+      display: none;
+      height: 100vh;
+      overflow-y: auto;
+      animation: fadeIn 0.5s forwards;
+    }
+    /* Controls: Add/Remove Card Buttons */
+    #controls {
+      text-align: center;
+      margin: 20px 0;
+    }
+    #controls button {
+      font-size: 1.2rem;
+      padding: 10px 20px;
+      margin: 0 10px;
+      background: linear-gradient(45deg, #26a69a, #00796b);
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    #controls button:hover {
+      transform: scale(1.1);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+    /* Scenario Pages */
+    #scenario1-page,
+    #scenario2-page {
+      height: calc(100vh - 80px);
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: #e0f7fa;
+      text-align: center;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    #scenario1-page .scenario,
+    #scenario2-page .scenario {
+      width: 90%;
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 15px;
+      background: #f1f8e9;
+      border: 1px solid #c5e1a5;
+      border-radius: 8px;
+      text-align: left;
+    }
+    #scenario1-page h2,
+    #scenario2-page h2 {
+      color: #558b2f;
+    }
+    .cards-container {
+      display: flex;
+      justify-content: center;
+      margin: 15px 0;
+    }
+    .card {
+      width: 50px;
+      height: 75px;
+      border: 2px solid #555;
+      margin: 5px;
+      background: #e57373;
+      border-radius: 4px;
+      transition: background 0.3s, transform 0.3s;
+    }
+    .card.green {
+      background: #66bb6a;
+      transform: scale(1.05);
+    }
+    .message {
+      margin-top: 10px;
+      font-weight: bold;
+      color: #424242;
+    }
+    /* Scenario Navigation */
+    #scenario-nav {
+      margin-top: 20px;
+    }
+    #scenario-nav button {
+      font-size: 1.2rem;
+      padding: 10px 20px;
+      margin: 0 10px;
+      background: linear-gradient(45deg, #00796b, #004d40);
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    #scenario-nav button:hover {
+      transform: scale(1.1);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    /* Button click animation */
+    .button-click {
+      animation: pop 0.2s ease;
+    }
+    @keyframes pop {
+      0% { transform: scale(1); }
+      50% { transform: scale(0.9); }
+      100% { transform: scale(1); }
+    }
+    .shake {
+      animation: shake 0.5s;
+    }
+    @keyframes shake {
+      0% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      50% { transform: translateX(5px); }
+      75% { transform: translateX(-5px); }
+      100% { transform: translateX(0); }
+    }
+    /* Modal styles */
+    #modal, #finalModal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 2000;
+    }
+    #modal-content, #finalModalContent {
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      max-width: 350px;
+      margin: 150px auto;
+      text-align: center;
+    }
+    @media (max-width: 800px) {
+      #start-screen h1 { font-size: 15vh; }
+      .instruction-screen p { font-size: 1.2rem; }
+      #scenario1-page .scenario, #scenario2-page .scenario { width: 95%; }
+    }
+  </style>
 </head>
-
 <body>
-    <!-- Header with Restart button (visible on instructions and interactive screens) -->
-    <header id="header">
-        <button id="restart-button">Restart</button>
-    </header>
+  <!-- Header with Restart button (visible on instructions and interactive screens) -->
+  <header id="header">
+    <button id="restart-button">Restart</button>
+  </header>
 
-    <!-- Start Screen -->
-    <div id="start-screen">
-        <h1>WELCOME TO SIM MATEO</h1>
-        <button id="start-button">START</button>
+  <!-- Start Screen -->
+  <div id="start-screen">
+    <h1>WELCOME TO SIM MATEO</h1>
+    <button id="start-button">START</button>
+  </div>
+
+  <!-- Instruction Container -->
+  <div id="instruction-container">
+    <!-- Instruction Screen 1 -->
+    <div id="instruction-screen-1" class="instruction-screen">
+      <img src="instructions1.png" alt="Instruction 1">
+      <p>Each green card represents 10% of clean electricity.</p>
     </div>
-
-    <!-- Instruction Container -->
-    <div id="instruction-container">
-        <!-- Instruction Screen 1 -->
-        <div id="instruction-screen-1" class="instruction-screen">
-            <img src="instructions1.png" alt="Instruction 1">
-            <p>Each green card represents 10% of clean electricity.</p>
-        </div>
-        <!-- Instruction Screen 2 -->
-        <div id="instruction-screen-2" class="instruction-screen">
-            <img src="instructions2.png" alt="Instruction 2">
-            <p>Each red card represents 10% of traditional carbon‑intensive energy.</p>
-        </div>
-        <!-- Instruction Screen 3 -->
-        <div id="instruction-screen-3" class="instruction-screen">
-            <img src="instructions3.png" alt="Instruction 3">
-            <p>Tap each card on SIM Mateo's generator to visualize the amount of clean electricity the area is using.</p>
-        </div>
-        <!-- Navigation for instructions -->
-        <div id="instruction-nav">
-            <button id="instruction-back">Back</button>
-            <button id="instruction-next">Next</button>
-        </div>
+    <!-- Instruction Screen 2 -->
+    <div id="instruction-screen-2" class="instruction-screen">
+      <img src="instructions2.png" alt="Instruction 2">
+      <p>Each red card represents 10% of traditional carbon‑intensive energy.</p>
     </div>
-
-    <!-- Main Interactive Screen -->
-    <div id="main-screen">
-        <!-- Controls: Add/Remove Cards (visible on both scenario pages) -->
-        <div id="controls">
-            <button id="add-card">Green Card</button>
-            <button id="remove-card">Red Card</button>
-        </div>
-        <!-- Scenario 1 Page -->
-        <div id="scenario1-page">
-            <div class="scenario">
-                <h2>What percentage of California's electricity is clean? (e.g. solar, hydro, wind, nuclear)</h2>
-                <div class="cards-container" id="cards-ca"></div>
-                <div class="message" id="message-ca"></div>
-            </div>
-            <div id="scenario-nav">
-                <button id="scenario1-next">Next</button>
-            </div>
-        </div>
-        <!-- Scenario 2 Page -->
-        <div id="scenario2-page" style="display: none;">
-            <div class="scenario">
-                <h2>What percentage of San Mateo County's electricity is clean?</h2>
-                <div class="cards-container" id="cards-sm"></div>
-                <div class="message" id="message-sm"></div>
-            </div>
-            <div id="scenario-nav">
-                <button id="scenario2-back">Back</button>
-            </div>
-        </div>
+    <!-- Instruction Screen 3 -->
+    <div id="instruction-screen-3" class="instruction-screen">
+      <img src="instructions3.png" alt="Instruction 3">
+      <p>Tap each card on SIM Mateo's generator to visualize the amount of clean electricity the area is using.</p>
     </div>
-
-    <!-- Modal for Scenario 1 congratulatory popup -->
-    <div id="modal">
-        <div id="modal-content">
-            <h2>Congratulations!</h2>
-            <p>Great job! Keep guessing the current state in San Mateo County!</p>
-            <button id="modal-close">Close</button>
-        </div>
+    <!-- Navigation for instructions -->
+    <div id="instruction-nav">
+      <button id="instruction-back">Back</button>
+      <button id="instruction-next">Next</button>
     </div>
+  </div>
 
-    <!-- Final Modal for educational message (Scenario 2 congratulatory popup) -->
-    <div id="finalModal">
-        <div id="finalModalContent">
-            <h2>Congratulations!</h2>
-            <p>
-                You have completed the challenge! Renewable energy is essential for a sustainable future. Clean energy reduces greenhouse gas emissions, improves air quality, and creates green jobs. Keep learning about renewable energy and help build a better tomorrow!
-            </p>
-            <button id="play-again">Play Again</button>
-        </div>
+  <!-- Main Interactive Screen -->
+  <div id="main-screen">
+    <!-- Controls: Add/Remove Cards (visible on both scenario pages) -->
+    <div id="controls">
+      <button id="add-card">Green Card</button>
+      <button id="remove-card">Red Card</button>
     </div>
+    <!-- Scenario 1 Page -->
+    <div id="scenario1-page">
+      <div class="scenario">
+        <h2>What percentage of California's electricity is clean? (e.g. solar, hydro, wind, nuclear)</h2>
+        <div class="cards-container" id="cards-ca"></div>
+        <div class="message" id="message-ca"></div>
+      </div>
+      <div id="scenario-nav">
+        <button id="scenario1-next">Next</button>
+      </div>
+    </div>
+    <!-- Scenario 2 Page -->
+    <div id="scenario2-page" style="display: none;">
+      <div class="scenario">
+        <h2>What percentage of San Mateo County's electricity is clean?</h2>
+        <div class="cards-container" id="cards-sm"></div>
+        <div class="message" id="message-sm"></div>
+      </div>
+      <div id="scenario-nav">
+        <button id="scenario2-back">Back</button>
+      </div>
+    </div>
+  </div>
 
-    <script>
-        // ------------------------------
-        // Sound effects setup
-        // ------------------------------
-        const clickSound = new Audio('SoundWindowsNavigationStart.wav');
-        const scenarioCASound_10 = new Audio('SoundScenarioCA_10.mp3');
-        const scenarioCASound_win = new Audio('SoundScenarioCA_win.mp3');
-        const scenarioSMCSound_Start = new Audio('SoundScenarioSMC_Start.mp3');
-        const scenarioSMCSound_60 = new Audio('SoundScenarioSMC_60.mp3');
-        const scenarioSMCSound_win = new Audio('SoundScenarioSMC_win.mp3');
-        const wrongSound = new Audio('SoundWindowsCriticalStop.mp3');
-        const welcomeSound = new Audio('SoundWelcome.mp3');
+  <!-- Modal for Scenario 1 congratulatory popup -->
+  <div id="modal">
+    <div id="modal-content">
+      <h2>Congratulations!</h2>
+      <p>Great job! Keep guessing the current state in San Mateo County!</p>
+      <button id="modal-close">Close</button>
+    </div>
+  </div>
 
-        // ------------------------------
-        // Global variables and DOM element references
-        // ------------------------------
-        let cardCount = 0; // Progress variable: Scenario 1 starts at 0
-        let currentInstruction = 1;
-        const totalInstructions = 3;
+  <!-- Final Modal for educational message (Scenario 2 congratulatory popup) -->
+  <div id="finalModal">
+    <div id="finalModalContent">
+      <h2>Congratulations!</h2>
+      <p>
+        You have completed the challenge! Renewable energy is essential for a sustainable future.
+        Clean energy reduces greenhouse gas emissions, improves air quality, and creates green jobs.
+        Keep learning about renewable energy and help build a better tomorrow!
+      </p>
+      <button id="play-again">Play Again</button>
+    </div>
+  </div>
 
-        const startButton = document.getElementById('start-button');
-        const startScreen = document.getElementById('start-screen');
-        const instructionContainer = document.getElementById('instruction-container');
-        const instructionScreens = document.getElementsByClassName('instruction-screen');
-        const instructionBack = document.getElementById('instruction-back');
-        const instructionNext = document.getElementById('instruction-next');
-        const mainScreen = document.getElementById('main-screen');
-        const header = document.getElementById('header');
-        const restartButton = document.getElementById('restart-button');
+  <script>
+    // ------------------------------
+    // Sound effects setup
+    // ------------------------------
+    const clickSound = new Audio('SoundWindowsNavigationStart.wav');
+    const scenarioCASound_10 = new Audio('SoundScenarioCA_10.mp3');
+    const scenarioCASound_win = new Audio('SoundScenarioCA_win.mp3');
+    const scenarioSMCSound_Start = new Audio('SoundScenarioSMC_Start.mp3');
+    const scenarioSMCSound_60 = new Audio('SoundScenarioSMC_60.mp3');
+    const scenarioSMCSound_win = new Audio('SoundScenarioSMC_win.mp3');
+    const wrongSound = new Audio('SoundWindowsCriticalStop.mp3');
+    const welcomeSound = new Audio('SoundWelcome.mp3');
 
-        const scenario1Page = document.getElementById('scenario1-page');
-        const cardsCA = document.getElementById('cards-ca');
-        const messageCA = document.getElementById('message-ca');
-        const scenario1Next = document.getElementById('scenario1-next');
+    // ------------------------------
+    // Global variables and DOM element references
+    // ------------------------------
+    let cardCount = 0; // Progress variable: Scenario 1 starts at 0
+    let currentInstruction = 1;
+    const totalInstructions = 3;
 
-        const scenario2Page = document.getElementById('scenario2-page');
-        const cardsSM = document.getElementById('cards-sm');
-        const messageSM = document.getElementById('message-sm');
-        const scenario2Back = document.getElementById('scenario2-back');
+    const startButton = document.getElementById('start-button');
+    const startScreen = document.getElementById('start-screen');
+    const instructionContainer = document.getElementById('instruction-container');
+    const instructionScreens = document.getElementsByClassName('instruction-screen');
+    const instructionBack = document.getElementById('instruction-back');
+    const instructionNext = document.getElementById('instruction-next');
+    const mainScreen = document.getElementById('main-screen');
+    const header = document.getElementById('header');
+    const restartButton = document.getElementById('restart-button');
 
-        const addCardButton = document.getElementById('add-card');
-        const removeCardButton = document.getElementById('remove-card');
+    const scenario1Page = document.getElementById('scenario1-page');
+    const cardsCA = document.getElementById('cards-ca');
+    const messageCA = document.getElementById('message-ca');
+    const scenario1Next = document.getElementById('scenario1-next');
 
-        const modal = document.getElementById('modal');
-        const modalClose = document.getElementById('modal-close');
-        const finalModal = document.getElementById('finalModal');
-        const playAgainButton = document.getElementById('play-again');
+    const scenario2Page = document.getElementById('scenario2-page');
+    const cardsSM = document.getElementById('cards-sm');
+    const messageSM = document.getElementById('message-sm');
+    const scenario2Back = document.getElementById('scenario2-back');
 
-        // ------------------------------
-        // Board command configuration for sequential command sending
-        // ------------------------------
-        // Array of board identifiers in the desired order
-        const boardCommands = ["A1", "A2", "C1", "C2", "D1", "D2", "D3", "E1", "E2", "F1"];
-        let boardIndex = 0; // Tracks the next board command to send
+    const addCardButton = document.getElementById('add-card');
+    const removeCardButton = document.getElementById('remove-card');
 
-        /**
-         * sendCommand(color)
-         *
-         * Constructs a command string using the current board identifier from boardCommands
-         * and the given color ("green" or "red"), then sends it via WebSocket.
-         *
-         * @param {string} color - The LED color command, e.g., "green" or "red".
-         */
-        function sendCommand(color) {
-            // Construct the command string (e.g., "A1_GREEN")
-            const command = boardCommands[boardIndex] + "_" + color.toUpperCase();
-            // Send the command over the WebSocket connection
-            socket.send(command);
-            console.log("Sent command:", command);
-            // Move to the next board command in sequence, wrapping around if necessary
-            boardIndex = (boardIndex + 1) % boardCommands.length;
-        }
+    const modal = document.getElementById('modal');
+    const modalClose = document.getElementById('modal-close');
+    const finalModal = document.getElementById('finalModal');
+    const playAgainButton = document.getElementById('play-again');
 
-        // ------------------------------
-        // UI Update Functions
-        // ------------------------------
-        function createCards(container, greenCount, total = 10) {
-            container.innerHTML = '';
-            for (let i = 0; i < total; i++) {
-                const card = document.createElement('div');
-                card.classList.add('card');
-                if (i < greenCount) card.classList.add('green');
-                container.appendChild(card);
-            }
-        }
+    // ------------------------------
+    // Board command configuration for sequential command sending
+    // ------------------------------
+    const boardCommands = ["A1", "A2", "C1", "C2", "D1", "D2", "D3", "E1", "E2", "F1"];
+    let boardIndex = 0;
 
-        function updateUI() {
-            // Scenario 1: Show up to 3 cards
-            let caGreen = cardCount <= 3 ? cardCount : 3;
-            createCards(cardsCA, caGreen);
-            if (scenario1Page.style.display !== 'none') {
-                if (cardCount === 1) {
-                    messageCA.textContent = "CA has reached 10% clean energy at 2003!";
-                    scenarioCASound_10.play();
-                    animateElement(messageCA, 'button-click', 300);
-                } else if (cardCount === 3) {
-                    messageCA.textContent = "That's right! California state currently uses about 35% clean electricity.";
-                    scenarioCASound_win.play();
-                    setTimeout(showModal, 500);
-                } else {
-                    messageCA.textContent = "";
-                }
-            }
-            // Scenario 2: Show full progress (if cardCount >= 3)
-            let smGreen = cardCount >= 3 ? cardCount : 0;
-            createCards(cardsSM, smGreen);
-            if (cardCount === 6) {
-                messageSM.textContent = "You're getting close! San Mateo reached 60% clean electricity in 2020";
-                scenarioSMCSound_60.play();
-                animateElement(messageSM, 'button-click', 300);
-            } else if (cardCount === 9) {
-                messageSM.textContent = "You got it! San Mateo serves 100% clean electricity – leading the nation!";
-                scenarioSMCSound_win.play();
-                animateElement(messageSM, 'button-click', 300);
-                setTimeout(showFinalModal, 1000);
-            } else {
-                messageSM.textContent = "";
-            }
-        }
+    /**
+     * sendCommand(color)
+     *
+     * Constructs a command string using the current board identifier from boardCommands
+     * and the provided color ("green" or "red"). The command is sent via WebSocket to the Node.js server.
+     *
+     * @param {string} color - The LED color command ("green" or "red").
+     */
+    function sendCommand(color) {
+      const command = boardCommands[boardIndex] + "_" + color.toUpperCase();
+      socket.send(command);
+      console.log("Sent command:", command);
+      boardIndex = (boardIndex + 1) % boardCommands.length;
+    }
 
-        // ------------------------------
-        // Reset Function: Resets UI and Variables to Start State
-        // ------------------------------
-        function resetExhibit() {
-            cardCount = 0;
-            currentInstruction = 1;
-            boardIndex = 0; // Reset board order sequence
-            instructionContainer.style.display = 'none';
-            mainScreen.style.display = 'none';
-            scenario1Page.style.display = 'none';
-            scenario2Page.style.display = 'none';
-            modal.style.display = 'none';
-            finalModal.style.display = 'none';
-            header.style.display = 'none';
-            messageCA.textContent = "";
-            messageSM.textContent = "";
-            createCards(cardsCA, 0);
-            createCards(cardsSM, 0);
-            startScreen.style.display = 'flex';
-        }
+    // ------------------------------
+    // UI Update Functions
+    // ------------------------------
+    function createCards(container, greenCount, total = 10) {
+      container.innerHTML = '';
+      for (let i = 0; i < total; i++) {
+          const card = document.createElement('div');
+          card.classList.add('card');
+          if (i < greenCount) card.classList.add('green');
+          container.appendChild(card);
+      }
+    }
 
-        // ------------------------------
-        // Instruction Navigation Functions
-        // ------------------------------
-        function showInstructionScreen(index) {
-            currentInstruction = index;
-            for (let i = 0; i < instructionScreens.length; i++) {
-                instructionScreens[i].style.display = 'none';
-            }
-            document.getElementById('instruction-screen-' + index).style.display = 'flex';
-            instructionBack.style.display = (index === 1) ? 'none' : 'inline-block';
-            instructionNext.textContent = (index === totalInstructions) ? 'Continue' : 'Next';
-        }
-        instructionBack.addEventListener('click', () => {
-            animateButton(instructionBack);
-            if (currentInstruction > 1) {
-                showInstructionScreen(currentInstruction - 1);
-            }
-        });
-        instructionNext.addEventListener('click', () => {
-            animateButton(instructionNext);
-            if (currentInstruction < totalInstructions) {
-                showInstructionScreen(currentInstruction + 1);
-            } else {
-                instructionContainer.style.display = 'none';
-                mainScreen.style.display = 'block';
-                showScenario1();
-                updateUI();
-            }
-        });
+    function updateUI() {
+      // Scenario 1: Show up to 3 cards
+      let caGreen = cardCount <= 3 ? cardCount : 3;
+      createCards(cardsCA, caGreen);
+      if (scenario1Page.style.display !== 'none') {
+          if (cardCount === 1) {
+              messageCA.textContent = "CA has reached 10% clean energy at 2003!";
+              scenarioCASound_10.play();
+              animateElement(messageCA, 'button-click', 300);
+          } else if (cardCount === 3) {
+              messageCA.textContent = "That's right! California state currently uses about 35% clean electricity.";
+              scenarioCASound_win.play();
+              setTimeout(showModal, 500);
+          } else {
+              messageCA.textContent = "";
+          }
+      }
+      // Scenario 2: Show full progress if cardCount >= 3
+      let smGreen = cardCount >= 3 ? cardCount : 0;
+      createCards(cardsSM, smGreen);
+      if (cardCount === 6) {
+          messageSM.textContent = "You're getting close! San Mateo reached 60% clean electricity in 2020";
+          scenarioSMCSound_60.play();
+          animateElement(messageSM, 'button-click', 300);
+      } else if (cardCount === 9) {
+          messageSM.textContent = "You got it! San Mateo serves 100% clean electricity – leading the nation!";
+          scenarioSMCSound_win.play();
+          animateElement(messageSM, 'button-click', 300);
+          setTimeout(showFinalModal, 1000);
+      } else {
+          messageSM.textContent = "";
+      }
+    }
 
-        // ------------------------------
-        // Scenario Navigation Functions
-        // ------------------------------
-        function showScenario1() {
-            scenario1Page.style.display = 'flex';
-            scenario2Page.style.display = 'none';
-        }
+    // ------------------------------
+    // Helper: animateElement without using ES6 default parameters
+    // ------------------------------
+    function animateElement(element, animationClass, duration) {
+      duration = duration || 500;
+      element.classList.add(animationClass);
+      setTimeout(function() {
+        element.classList.remove(animationClass);
+      }, duration);
+    }
 
-        function showScenario2() {
-            scenario1Page.style.display = 'none';
-            scenario2Page.style.display = 'flex';
-        }
+    // ------------------------------
+    // Reset Function: Resets UI and Variables to Start State
+    // ------------------------------
+    function resetExhibit() {
+      cardCount = 0;
+      currentInstruction = 1;
+      boardIndex = 0; // Reset board order sequence
+      instructionContainer.style.display = 'none';
+      mainScreen.style.display = 'none';
+      scenario1Page.style.display = 'none';
+      scenario2Page.style.display = 'none';
+      modal.style.display = 'none';
+      finalModal.style.display = 'none';
+      header.style.display = 'none';
+      messageCA.textContent = "";
+      messageSM.textContent = "";
+      createCards(cardsCA, 0);
+      createCards(cardsSM, 0);
+      startScreen.style.display = 'flex';
+    }
 
-        // ------------------------------
-        // Event Handlers
-        // ------------------------------
-        startButton.addEventListener('click', () => {
-            animateButton(startButton);
-            clickSound.play();
-            welcomeSound.play();
-            startScreen.style.display = 'none';
-            header.style.display = 'block';
-            instructionContainer.style.display = 'flex';
-            showInstructionScreen(1);
-        });
-        scenario1Next.addEventListener('click', () => {
-            animateButton(scenario1Next);
-            clickSound.play();
-            showScenario2();
-        });
-        scenario2Back.addEventListener('click', () => {
-            animateButton(scenario2Back);
-            clickSound.play();
-            showScenario1();
-        });
-        addCardButton.addEventListener('click', () => {
-            animateButton(addCardButton);
-            clickSound.play();
-            // Update progress in UI
-            if (cardCount < 10) {
-                cardCount++;
-                updateUI();
-                // Send the corresponding command (e.g., "A1_GREEN") to the server
-                sendCommand("green");
-            }
-        });
-        removeCardButton.addEventListener('click', () => {
-            animateButton(removeCardButton);
-            clickSound.play();
-            if (cardCount > 0) {
-                cardCount--;
-                updateUI();
-                // Send the corresponding command (e.g., "A1_RED") to the server
-                sendCommand("red");
-            }
-        });
-        restartButton.addEventListener('click', resetExhibit);
-        resetExhibit();
+    // ------------------------------
+    // Instruction Navigation Functions
+    // ------------------------------
+    function showInstructionScreen(index) {
+      currentInstruction = index;
+      for (let i = 0; i < instructionScreens.length; i++) {
+          instructionScreens[i].style.display = 'none';
+      }
+      document.getElementById('instruction-screen-' + index).style.display = 'flex';
+      instructionBack.style.display = (index === 1) ? 'none' : 'inline-block';
+      instructionNext.textContent = (index === totalInstructions) ? 'Continue' : 'Next';
+    }
+    instructionBack.addEventListener('click', () => {
+      animateButton(instructionBack);
+      if (currentInstruction > 1) {
+          showInstructionScreen(currentInstruction - 1);
+      }
+    });
+    instructionNext.addEventListener('click', () => {
+      animateButton(instructionNext);
+      if (currentInstruction < totalInstructions) {
+          showInstructionScreen(currentInstruction + 1);
+      } else {
+          instructionContainer.style.display = 'none';
+          mainScreen.style.display = 'block';
+          showScenario1();
+          updateUI();
+      }
+    });
 
-        // ------------------------------
-        // WebSocket Integration
-        // ------------------------------
-        const socket = new WebSocket("ws://localhost:80");
-        socket.onopen = () => {
-            console.log("Connected to SIM Mateo WebSocket server");
-        };
-        socket.onmessage = (event) => {
-            console.log("Received from Arduino:", event.data);
-            const command = event.data.trim().toLowerCase();
-            if (command === "red") {
-                removeCardButton.click();
-            } else if (command === "green") {
-                addCardButton.click();
-            }
-        };
-        socket.onerror = (error) => {
-            console.error("WebSocket error:", error);
-        };
-        socket.onclose = () => {
-            console.log("WebSocket connection closed");
-        };
+    // ------------------------------
+    // Scenario Navigation Functions
+    // ------------------------------
+    function showScenario1() {
+      scenario1Page.style.display = 'flex';
+      scenario2Page.style.display = 'none';
+    }
+    function showScenario2() {
+      scenario1Page.style.display = 'none';
+      scenario2Page.style.display = 'flex';
+    }
 
-        // ------------------------------
-        // sendCommand(color)
-        // ------------------------------
-        /**
-         * Constructs a command string using the current board command from the boardCommands array
-         * and the provided color ("green" or "red"). The command is then sent via the WebSocket
-         * to the Node.js server, which forwards it to the Arduino.
-         *
-         * @param {string} color - The LED color command ("green" or "red").
-         */
-        const boardCommands = ["A1", "A2", "C1", "C2", "D1", "D2", "D3", "E1", "E2", "F1"];
-        let boardIndex = 0;
+    // ------------------------------
+    // Event Handlers
+    // ------------------------------
+    startButton.addEventListener('click', () => {
+      animateButton(startButton);
+      clickSound.play();
+      welcomeSound.play();
+      startScreen.style.display = 'none';
+      header.style.display = 'block';
+      instructionContainer.style.display = 'flex';
+      showInstructionScreen(1);
+    });
+    scenario1Next.addEventListener('click', () => {
+      animateButton(scenario1Next);
+      clickSound.play();
+      showScenario2();
+    });
+    scenario2Back.addEventListener('click', () => {
+      animateButton(scenario2Back);
+      clickSound.play();
+      showScenario1();
+    });
+    addCardButton.addEventListener('click', () => {
+      animateButton(addCardButton);
+      clickSound.play();
+      if (cardCount < 10) {
+          cardCount++;
+          updateUI();
+          // Send command via WebSocket for green card
+          sendCommand("green");
+      }
+    });
+    removeCardButton.addEventListener('click', () => {
+      animateButton(removeCardButton);
+      clickSound.play();
+      if (cardCount > 0) {
+          cardCount--;
+          updateUI();
+          // Send command via WebSocket for red card
+          sendCommand("red");
+      }
+    });
+    restartButton.addEventListener('click', resetExhibit);
+    resetExhibit();
 
-        function sendCommand(color) {
-            // Construct command string (e.g., "A1_GREEN")
-            const command = boardCommands[boardIndex] + "_" + color.toUpperCase();
-            // Send command via WebSocket
-            socket.send(command);
-            console.log("Sent command:", command);
-            // Increment board index (wrap around if necessary)
-            boardIndex = (boardIndex + 1) % boardCommands.length;
-        }
-    </script>
+    // ------------------------------
+    // WebSocket Integration
+    // ------------------------------
+    const socket = new WebSocket("ws://localhost:80");
+    socket.onopen = () => {
+      console.log("Connected to SIM Mateo WebSocket server");
+    };
+    socket.onmessage = (event) => {
+      console.log("Received from Arduino:", event.data);
+      const command = event.data.trim().toLowerCase();
+      if (command === "red") {
+          removeCardButton.click();
+      } else if (command === "green") {
+          addCardButton.click();
+      }
+    };
+    socket.onerror = (error) => {
+      console.error("WebSocket error:", error);
+    };
+    socket.onclose = () => {
+      console.log("WebSocket connection closed");
+    };
+
+    // ------------------------------
+    // sendCommand(color)
+    // ------------------------------
+    /**
+     * Constructs a command string using the current board command from the boardCommands array
+     * and the provided color ("green" or "red"). The command is then sent via the WebSocket
+     * to the Node.js server, which forwards it to the Arduino.
+     *
+     * @param {string} color - The LED color command ("green" or "red").
+     */
+    function sendCommand(color) {
+      const command = boardCommands[boardIndex] + "_" + color.toUpperCase();
+      socket.send(command);
+      console.log("Sent command:", command);
+      boardIndex = (boardIndex + 1) % boardCommands.length;
+    }
+  </script>
 </body>
-
 </html>
