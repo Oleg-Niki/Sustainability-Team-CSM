@@ -439,29 +439,25 @@
               --------------------------------------------------------------------------------
               ORDER OF SCENARIOS & ACTIONS:
               
-              1. The website loads with the Start Screen.
-                 - User clicks "START" to enter the Instruction phase.
+              1. Start Screen:
+                 - Displayed upon page load. User clicks "START" to move to instructions.
               
               2. Instruction Phase:
-                 - The Instruction Container displays multiple screens (navigable via "Next" and "Back").
-                 - When finished, the Main Interactive Screen is shown.
+                 - Multiple instruction screens are navigable with "Next" and "Back" buttons.
+                 - When finished, the main interactive screen is shown.
               
               3. Main Interactive Screen:
-                 - Contains two scenario pages (Scenario 1 for California, Scenario 2 for San Mateo County).
-                 - The UI update functions update cardCount and display messages & animations based on thresholds.
-                 - The user uses "Green Card" and "Red Card" buttons to change progress.
-                 - Each button press sends a corresponding command to the server via WebSocket.
-                 - Navigation buttons ("Next" / "Back") allow switching between scenarios.
+                 - Contains two scenario pages: Scenario 1 (California) and Scenario 2 (San Mateo County).
+                 - The UI updates based on cardCount; each button press sends a corresponding command.
               
               4. Modal Popups:
-                 - A congratulatory modal appears at key progress thresholds.
-                 - When the modal's "Close" button is pressed, the screen transitions automatically (with sound).
+                 - Congratulatory modal appears at key thresholds. On closing the modal, automatic transition occurs.
               
               5. Reset:
-                 - The "Restart" button (in the header) resets the entire exhibit to the Start Screen.
+                 - The "Restart" button resets the exhibit to the Start Screen.
               
               6. WebSocket Integration:
-                 - The website sends and receives commands from the Node.js server to control Arduino relays.
+                 - Sends and receives commands between the website and the Node.js server/Arduino.
               --------------------------------------------------------------------------------
             */
 
@@ -560,13 +556,19 @@
          * sendCommand(color)
          *
          * Constructs a command string using the current board identifier from boardCommands
-         * and the provided color ("green" or "red"). The command is then sent via the WebSocket
-         * to the Node.js server, which forwards it to the Arduino.
+         * and the provided color ("green" or "red"). The command is prefixed with the expected
+         * "FROM NANO X:" string, where X is the board letter (derived from the board identifier).
+         * The command is then sent via WebSocket to the Node.js server.
          *
          * @param {string} color - The LED color command ("green" or "red").
          */
         function sendCommand(color) {
-            const command = boardCommands[boardIndex] + "_" + color.toUpperCase();
+            // Get the current board command (e.g., "A1")
+            const boardCmd = boardCommands[boardIndex];
+            // Derive the board letter (first character)
+            const boardLetter = boardCmd.charAt(0);
+            // Construct the full command string
+            const command = "FROM NANO " + boardLetter + ": " + boardCmd + "_" + color.toUpperCase();
             socket.send(command);
             console.log("Sent command:", command);
             boardIndex = (boardIndex + 1) % boardCommands.length;
@@ -730,29 +732,6 @@
         resetExhibit();
 
         // ------------------------------
-        // WebSocket Integration
-        // ------------------------------
-        const socket = new WebSocket("ws://localhost:80");
-        socket.onopen = () => {
-            console.log("Connected to SIM Mateo WebSocket server");
-        };
-        socket.onmessage = (event) => {
-            console.log("Received from Arduino:", event.data);
-            const command = event.data.trim().toLowerCase();
-            if (command === "red") {
-                removeCardButton.click();
-            } else if (command === "green") {
-                addCardButton.click();
-            }
-        };
-        socket.onerror = (error) => {
-            console.error("WebSocket error:", error);
-        };
-        socket.onclose = () => {
-            console.log("WebSocket connection closed");
-        };
-
-        // ------------------------------
         // Modal and Final Modal Handling
         // ------------------------------
         function showModal() {
@@ -784,17 +763,46 @@
         });
 
         // ------------------------------
+        // WebSocket Integration
+        // ------------------------------
+        const socket = new WebSocket("ws://localhost:80");
+        socket.onopen = () => {
+            console.log("Connected to SIM Mateo WebSocket server");
+        };
+        socket.onmessage = (event) => {
+            console.log("Received from Arduino:", event.data);
+            const command = event.data.trim().toLowerCase();
+            if (command === "red") {
+                removeCardButton.click();
+            } else if (command === "green") {
+                addCardButton.click();
+            }
+        };
+        socket.onerror = (error) => {
+            console.error("WebSocket error:", error);
+        };
+        socket.onclose = () => {
+            console.log("WebSocket connection closed");
+        };
+
+        // ------------------------------
         // sendCommand(color)
         // ------------------------------
         /**
          * Constructs a command string using the current board command from the boardCommands array
-         * and the provided color ("green" or "red"). The command is then sent via the WebSocket
-         * to the Node.js server, which forwards it to the Arduino.
+         * and the provided color ("green" or "red"). The command is prefixed with the expected
+         * "FROM NANO X:" string (where X is the board letter derived from the board identifier)
+         * and then sent via the WebSocket to the Node.js server, which forwards it to the Arduino.
+         *
+         * For example, if boardCommands[boardIndex] is "A1" and color is "green",
+         * the function sends: "FROM NANO A: A1_GREEN".
          *
          * @param {string} color - The LED color command ("green" or "red").
          */
         function sendCommand(color) {
-            const command = boardCommands[boardIndex] + "_" + color.toUpperCase();
+            const boardCmd = boardCommands[boardIndex]; // e.g., "A1"
+            const boardLetter = boardCmd.charAt(0); // e.g., "A"
+            const command = "FROM NANO " + boardLetter + ": " + boardCmd + "_" + color.toUpperCase();
             socket.send(command);
             console.log("Sent command:", command);
             boardIndex = (boardIndex + 1) % boardCommands.length;
