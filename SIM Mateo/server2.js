@@ -12,7 +12,7 @@ const port = 80;
 app.use(express.static('.'));
 
 // Replace with your Arduino port name (e.g., "COM12" for Windows or "/dev/ttyACM0" for Linux)
-const portName = "/dev/ttyACM0";
+const portName = "COM7"; // Adjust as needed
 const serialPort = new SerialPort({
     path: portName,
     baudRate: 9600,
@@ -78,8 +78,8 @@ wss.on("connection", (ws) => {
     // Listen for messages coming from the client and forward them to the Arduino's serial port.
     ws.on("message", (message) => {
         console.log(`Message from client: ${message}`);
-        // Write the command to the serial port with a newline terminator.
-        serialPort.write(message + "\n", (err) => {
+        // Write the received message to the serial port as is (without appending an extra newline)
+        serialPort.write(message, (err) => {
             if (err) {
                 console.error("Error writing to serial port:", err.message);
             } else {

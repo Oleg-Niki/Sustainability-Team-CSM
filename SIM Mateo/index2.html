@@ -105,6 +105,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            position: relative;
         }
         
         .instruction-screen img {
@@ -118,6 +119,25 @@
             font-size: 1.5rem;
             color: #333;
             margin: 10px 20px;
+        }
+        /* Example: Add a Map button to Instruction Screen 3 */
+        
+        #instruction-screen-3 button#map-button {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 1rem;
+            padding: 5px 10px;
+            background-color: #00796b;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        #instruction-screen-3 button#map-button:hover {
+            background-color: #004d40;
         }
         
         #instruction-nav {
@@ -371,8 +391,9 @@
             <img src="instructions2.png" alt="Instruction 2">
             <p>Each red card represents 10% of traditional carbon‑intensive energy.</p>
         </div>
-        <!-- Instruction Screen 3 -->
+        <!-- Instruction Screen 3 with Map Button added in top-left -->
         <div id="instruction-screen-3" class="instruction-screen">
+            <button id="map-button">Map</button>
             <img src="instructions3.png" alt="Instruction 3">
             <p>Tap each card on SIM Mateo's generator to visualize the amount of clean electricity the area is using.</p>
         </div>
@@ -436,30 +457,33 @@
 
     <script>
         /* 
-                      --------------------------------------------------------------------------------
-                      ORDER OF SCENARIOS & ACTIONS:
-                      
-                      1. Start Screen:
-                         - Displayed upon page load. User clicks "START" to move to instructions.
-                      
-                      2. Instruction Phase:
-                         - Multiple instruction screens are navigable with "Next" and "Back" buttons.
-                         - When finished, the main interactive screen is shown.
-                      
-                      3. Main Interactive Screen:
-                         - Contains two scenario pages: Scenario 1 (California) and Scenario 2 (San Mateo County).
-                         - The UI updates based on cardCount; each button press sends a corresponding command.
-                      
-                      4. Modal Popups:
-                         - Congratulatory modal appears at key thresholds. On closing the modal, automatic transition occurs.
-                      
-                      5. Reset:
-                         - The "Restart" button resets the exhibit to the Start Screen.
-                      
-                      6. WebSocket Integration:
-                         - Sends and receives commands between the website and the Node.js server/Arduino.
-                      --------------------------------------------------------------------------------
-                    */
+              --------------------------------------------------------------------------------
+              ORDER OF SCENARIOS & ACTIONS:
+              
+              1. Start Screen:
+                 - Displayed upon page load. User clicks "START" to move to instructions.
+              
+              2. Instruction Phase:
+                 - Multiple instruction screens (navigable via "Next" and "Back").
+                 - Instruction Screen 3 now has a Map button in the top left.
+                 - When finished, the Main Interactive Screen is shown.
+              
+              3. Main Interactive Screen:
+                 - Contains two scenario pages: Scenario 1 (California) and Scenario 2 (San Mateo County).
+                 - UI updates based on cardCount and triggers animations/sounds at specific thresholds.
+                 - Green and Red Card buttons update progress and send commands to the server.
+              
+              4. Modal Popups:
+                 - Congratulatory modal appears at key progress thresholds.
+                 - When the modal is closed, an automatic transition occurs (with sound).
+              
+              5. Reset:
+                 - The "Restart" button resets everything back to the Start Screen.
+              
+              6. WebSocket Integration:
+                 - Sends and receives commands between the website and the Node.js server/Arduino.
+              --------------------------------------------------------------------------------
+            */
 
         // ------------------------------
         // Helper: animateButton
@@ -555,10 +579,13 @@
         /**
          * sendCommand(color)
          *
-         * Constructs a command string using the current board identifier from boardCommands
+         * Constructs a two-line command string using the current board identifier from boardCommands
          * and the provided color ("green" or "red"). The command is prefixed with the expected
-         * "FROM NANO X:" string, where X is the board letter (derived from the board identifier).
-         * The command is then sent via WebSocket to the Node.js server.
+         * "FROM NANO X:" string (where X is the board letter derived from the board identifier) on the first line,
+         * and the second line is the uppercase color.
+         *
+         * For example, if boardCommands[boardIndex] is "A1" and color is "green", the function sends:
+         * "FROM NANO A: A1_GREEN\r\nGREEN"
          *
          * @param {string} color - The LED color command ("green" or "red").
          */
@@ -567,10 +594,10 @@
             const boardLetter = boardCmd.charAt(0); // e.g., "A"
             // Construct first line: "FROM NANO A: A1_GREEN"
             const commandLine1 = "FROM NANO " + boardLetter + ": " + boardCmd + "_" + color.toUpperCase();
-            // Second line is just the color
+            // Second line is just the color (e.g., "GREEN")
             const commandLine2 = color.toUpperCase();
-            // Combine both lines with a newline in between
-            const fullCommand = commandLine1 + "\n" + commandLine2;
+            // Combine using carriage return + newline ("\r\n")
+            const fullCommand = commandLine1 + "\r\n" + commandLine2;
             socket.send(fullCommand);
             console.log("Sent command:", fullCommand);
             boardIndex = (boardIndex + 1) % boardCommands.length;
@@ -791,22 +818,22 @@
         // sendCommand(color)
         // ------------------------------
         /**
-         * Constructs a command string using the current board command from the boardCommands array
-         * and the provided color ("green" or "red"). The command is prefixed with the expected
-         * "FROM NANO X:" string (where X is the board letter derived from the board identifier)
-         * and then sent via the WebSocket to the Node.js server, which forwards it to the Arduino.
-         *
-         * For example, if boardCommands[boardIndex] is "A1" and color is "green",
-         * the function sends: "FROM NANO A: A1_GREEN".
+         * Constructs a two-line command string using the current board command from boardCommands
+         * and the provided color ("green" or "red"). The first line is prefixed with "FROM NANO X:" 
+         * (where X is the board letter derived from the board identifier), and the second line is the color.
+         * For example, if boardCommands[boardIndex] is "A1" and color is "green", the function sends:
+         * "FROM NANO A: A1_GREEN\r\nGREEN"
          *
          * @param {string} color - The LED color command ("green" or "red").
          */
         function sendCommand(color) {
             const boardCmd = boardCommands[boardIndex]; // e.g., "A1"
             const boardLetter = boardCmd.charAt(0); // e.g., "A"
-            const command = "FROM NANO " + boardLetter + ": " + boardCmd + "_" + color.toUpperCase();
-            socket.send(command);
-            console.log("Sent command:", command);
+            const commandLine1 = "FROM NANO " + boardLetter + ": " + boardCmd + "_" + color.toUpperCase();
+            const commandLine2 = color.toUpperCase();
+            const fullCommand = commandLine1 + "\r\n" + commandLine2;
+            socket.send(fullCommand);
+            console.log("Sent command:", fullCommand);
             boardIndex = (boardIndex + 1) % boardCommands.length;
         }
     </script>
