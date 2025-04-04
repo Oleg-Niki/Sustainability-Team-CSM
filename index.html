@@ -127,21 +127,25 @@
         } */
         
         #instruction-nav {
-            margin-top: 30px;
+            position: relative;
+            width: 100%;
+            height: 0;
+        }
+        
+        #instruction-back {
+            left: 40px;
+        }
+        
+        #instruction-next {
+            right: 40px;
         }
         
         #instruction-nav button {
             position: absolute;
-            /* Positions the button relative to #start-screen */
             bottom: 40px;
-            /* Adjust distance from the bottom */
-            right: 40px;
-            /* Adjust distance from the right */
             font-family: 'Cinzel', serif;
             font-size: 2.5rem;
-            /* Increased font size for a bigger appearance */
             padding: 25px 50px;
-            /* Increased padding */
             background: linear-gradient(45deg, #ff8a00, #e52e71);
             color: #fff;
             border: none;
@@ -151,6 +155,26 @@
         }
         
         #instruction-nav button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        /* ------------------------------
+       Trying new class for instruction buttons
+       ------------------------------ */
+        
+        .instruction-btn {
+            font-family: 'Cinzel', serif;
+            font-size: 2.5rem;
+            padding: 25px 50px;
+            background: linear-gradient(45deg, #ff8a00, #e52e71);
+            color: #fff;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .instruction-btn:hover {
             transform: scale(1.1);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
         }
@@ -453,30 +477,30 @@
 
     <script>
         /* 
-                                                                                                                              --------------------------------------------------------------------------------
-                                                                                                                              ORDER OF SCENARIOS & ACTIONS:
-                                                                                                                              
-                                                                                                                              1. Start Screen:
-                                                                                                                                 - Displayed upon page load. User clicks "START" to move to instructions.
-                                                                                                                              
-                                                                                                                              2. Instruction Phase:
-                                                                                                                                 - Multiple instruction screens are navigable with "Next" and "Back" buttons.
-                                                                                                                                 - When finished, the main interactive screen is shown.
-                                                                                                                              
-                                                                                                                              3. Main Interactive Screen:
-                                                                                                                                 - Contains two scenario pages: Scenario 1 (California) and Scenario 2 (San Mateo County).
-                                                                                                                                 - The UI updates based on cardCount; each button press sends a corresponding command.
-                                                                                                                              
-                                                                                                                              4. Modal Popups:
-                                                                                                                                 - Congratulatory modal appears at key thresholds. On closing the modal, automatic transition occurs.
-                                                                                                                              
-                                                                                                                              5. Reset:
-                                                                                                                                 - The "Restart" button resets the exhibit to the Start Screen.
-                                                                                                                              
-                                                                                                                              6. WebSocket Integration:
-                                                                                                                                 - Sends and receives commands between the website and the Node.js server/Arduino.
-                                                                                                                              --------------------------------------------------------------------------------
-                                                                                                                            */
+                                                                                                                                                                      --------------------------------------------------------------------------------
+                                                                                                                                                                      ORDER OF SCENARIOS & ACTIONS:
+                                                                                                                                                                      
+                                                                                                                                                                      1. Start Screen:
+                                                                                                                                                                         - Displayed upon page load. User clicks "START" to move to instructions.
+                                                                                                                                                                      
+                                                                                                                                                                      2. Instruction Phase:
+                                                                                                                                                                         - Multiple instruction screens are navigable with "Next" and "Back" buttons.
+                                                                                                                                                                         - When finished, the main interactive screen is shown.
+                                                                                                                                                                      
+                                                                                                                                                                      3. Main Interactive Screen:
+                                                                                                                                                                         - Contains two scenario pages: Scenario 1 (California) and Scenario 2 (San Mateo County).
+                                                                                                                                                                         - The UI updates based on cardCount; each button press sends a corresponding command.
+                                                                                                                                                                      
+                                                                                                                                                                      4. Modal Popups:
+                                                                                                                                                                         - Congratulatory modal appears at key thresholds. On closing the modal, automatic transition occurs.
+                                                                                                                                                                      
+                                                                                                                                                                      5. Reset:
+                                                                                                                                                                         - The "Restart" button resets the exhibit to the Start Screen.
+                                                                                                                                                                      
+                                                                                                                                                                      6. WebSocket Integration:
+                                                                                                                                                                         - Sends and receives commands between the website and the Node.js server/Arduino.
+                                                                                                                                                                      --------------------------------------------------------------------------------
+                                                                                                                                                                    */
 
         // ------------------------------
         // Helper: animateButton
