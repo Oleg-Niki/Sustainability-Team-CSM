@@ -44,46 +44,33 @@
             transform: scale(1.1);
             background-color: #004d40;
         }
+        
+        .full-screen-page {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            animation: fadeIn 1s forwards;
+        }
         /* ------------------------------
        Start Screen
        ------------------------------ */
         
         #start-screen {
             position: relative;
-            /* Establishes a positioning context */
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
             background: url('assets/StartScreen.png') no-repeat center center;
             background-size: cover;
-            text-align: center;
-            animation: fadeIn 1s forwards;
         }
-        /* i decided to comment out the h1 tag because it was not used in the design
-        #start-screen h1 {
-            font-family: 'Cinzel', serif;
-            font-size: 20vh;
-            margin: 0;
-            line-height: 1;
-            color: #333;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-        }
-        */
         
         #start-screen button {
             position: absolute;
-            /* Positions the button relative to #start-screen */
             bottom: 40px;
-            /* Adjust distance from the bottom */
             right: 40px;
-            /* Adjust distance from the right */
             font-family: 'Cinzel', serif;
             font-size: 2.5rem;
-            /* Increased font size for a bigger appearance */
             padding: 25px 50px;
-            /* Increased padding */
             background: linear-gradient(45deg, #ff8a00, #e52e71);
             color: #fff;
             border: none;
@@ -97,49 +84,23 @@
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
         }
         /* ------------------------------
-       Instruction Container
-       ------------------------------ */
+         Instruction Screen 1
+         ------------------------------ */
         
-        #instruction-container {
-            display: none;
-            height: 100vh;
-            background: #e0f7fa;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            animation: fadeIn 1s forwards;
+        #instruction-screen-1 {
+            position: relative;
+            background: url('assets/Instructions1.png') no-repeat center center;
+            background-size: cover;
         }
         
-        .instruction-screen {
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .instruction-screen img {
-            width: 50%;
-            max-width: 50%;
-            height: auto;
-            margin-bottom: 20px;
-        }
-        
-        .instruction-screen p {
-            font-size: 1.5rem;
-            color: #333;
-            margin: 10px 20px;
-        }
-        
-        #instruction-nav {
-            margin-top: 30px;
-        }
-        
-        #instruction-nav button {
-            font-size: 1.2rem;
-            padding: 10px 20px;
-            margin: 0 10px;
-            background: linear-gradient(45deg, #00796b, #004d40);
+        #instruction-screen-1 button {
+            position: absolute;
+            bottom: 40px;
+            right: 40px;
+            font-family: 'Cinzel', serif;
+            font-size: 2.5rem;
+            padding: 25px 50px;
+            background: linear-gradient(45deg, #ff8a00, #e52e71);
             color: #fff;
             border: none;
             border-radius: 50px;
@@ -147,12 +108,70 @@
             transition: transform 0.3s, box-shadow 0.3s;
         }
         
-        #instruction-nav button:hover {
+        #instruction-screen-1 button:hover {
             transform: scale(1.1);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
         }
         /* ------------------------------
-       Main Interactive Screen
+         Instruction Screen 2
+         ------------------------------ */
+        
+        #instruction-screen-2 {
+            position: relative;
+            background: url('assets/Instructions2.png') no-repeat center center;
+            background-size: cover;
+        }
+        
+        #instruction-screen-2 button {
+            position: absolute;
+            bottom: 40px;
+            right: 40px;
+            font-family: 'Cinzel', serif;
+            font-size: 2.5rem;
+            padding: 25px 50px;
+            background: linear-gradient(45deg, #ff8a00, #e52e71);
+            color: #fff;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        #instruction-screen-2 button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        /* ------------------------------
+         Instruction Screen 3
+         ------------------------------ */
+        
+        #instruction-screen-3 {
+            position: relative;
+            background: url('assets/Instructions3.png') no-repeat center center;
+            background-size: cover;
+        }
+        
+        #instruction-screen-3 button {
+            position: absolute;
+            bottom: 40px;
+            right: 40px;
+            font-family: 'Cinzel', serif;
+            font-size: 2.5rem;
+            padding: 25px 50px;
+            background: linear-gradient(45deg, #ff8a00, #e52e71);
+            color: #fff;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        #instruction-screen-3 button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        /* ------------------------------
+       Main Interactive Screen & Others
        ------------------------------ */
         
         #main-screen {
@@ -161,9 +180,6 @@
             overflow-y: auto;
             animation: fadeIn 0.5s forwards;
         }
-        /* ------------------------------
-       Controls: Add/Remove Card Buttons
-       ------------------------------ */
         
         #controls {
             text-align: center;
@@ -186,9 +202,6 @@
             transform: scale(1.1);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
         }
-        /* ------------------------------
-       Scenario Pages
-       ------------------------------ */
         
         #scenario1-page,
         #scenario2-page {
@@ -246,9 +259,6 @@
             font-weight: bold;
             color: #424242;
         }
-        /* ------------------------------
-       Scenario Navigation
-       ------------------------------ */
         
         #scenario-nav {
             margin-top: 20px;
@@ -270,9 +280,6 @@
             transform: scale(1.1);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
         }
-        /* ------------------------------
-       Animations and Modal Styles
-       ------------------------------ */
         
         @keyframes fadeIn {
             from {
@@ -359,44 +366,36 @@
 </head>
 
 <body>
-    <!-- Header with Restart button (visible on instructions and interactive screens) -->
+    <!-- Header with Restart button -->
     <header id="header">
         <button id="restart-button">Restart</button>
     </header>
 
     <!-- Start Screen -->
-    <div id="start-screen">
-        <!--<h1>WELCOME TO SIM MATEO</h1>-->
+    <div id="start-screen" class="full-screen-page">
         <button id="start-button">START</button>
     </div>
 
-    <!-- Instruction Container -->
-    <div id="instruction-container">
-        <!-- Instruction Screen 1 -->
-        <div id="instruction-screen-1" class="instruction-screen">
-            <img src="instructions1.png" alt="Instruction 1">
-            <p>Each green card represents 10% of clean electricity.</p>
-        </div>
-        <!-- Instruction Screen 2 -->
-        <div id="instruction-screen-2" class="instruction-screen">
-            <img src="instructions2.png" alt="Instruction 2">
-            <p>Each red card represents 10% of traditional carbon‑intensive energy.</p>
-        </div>
-        <!-- Instruction Screen 3 -->
-        <div id="instruction-screen-3" class="instruction-screen">
-            <img src="instructions3.png" alt="Instruction 3">
-            <p>Tap each card on SIM Mateo's generator to visualize the amount of clean electricity the area is using.</p>
-        </div>
-        <!-- Navigation for instructions -->
-        <div id="instruction-nav">
-            <button id="instruction-back">Back</button>
-            <button id="instruction-next">Next</button>
-        </div>
+    <!-- Instruction Screen 1 -->
+    <div id="instruction-screen-1" class="full-screen-page" style="display: none;">
+        <button id="instruction1-next">Next</button>
+    </div>
+
+    <!-- Instruction Screen 2 -->
+    <div id="instruction-screen-2" class="full-screen-page" style="display: none;">
+        <button id="instruction2-back">Back</button>
+        <button id="instruction2-next">Next</button>
+    </div>
+
+    <!-- Instruction Screen 3 -->
+    <div id="instruction-screen-3" class="full-screen-page" style="display: none;">
+        <button id="instruction3-back">Back</button>
+        <button id="instruction3-continue">Continue</button>
     </div>
 
     <!-- Main Interactive Screen -->
     <div id="main-screen">
-        <!-- Controls: Add/Remove Cards (visible on both scenario pages) -->
+        <!-- Controls: Add/Remove Cards -->
         <div id="controls">
             <button id="add-card">Green Card</button>
             <button id="remove-card">Red Card</button>
@@ -412,8 +411,6 @@
                 <button id="scenario1-back">Back</button>
                 <button id="scenario1-next">Next</button>
             </div>
-
-
         </div>
         <!-- Scenario 2 Page -->
         <div id="scenario2-page" style="display: none;">
@@ -437,7 +434,7 @@
         </div>
     </div>
 
-    <!-- Final Modal for educational message (Scenario 2 congratulatory popup) -->
+    <!-- Final Modal for educational message -->
     <div id="finalModal">
         <div id="finalModalContent">
             <h2>Congratulations!</h2>
@@ -449,43 +446,9 @@
     </div>
 
     <script>
-        /* 
-                                                                                      --------------------------------------------------------------------------------
-                                                                                      ORDER OF SCENARIOS & ACTIONS:
-                                                                                      
-                                                                                      1. Start Screen:
-                                                                                         - Displayed upon page load. User clicks "START" to move to instructions.
-                                                                                      
-                                                                                      2. Instruction Phase:
-                                                                                         - Multiple instruction screens are navigable with "Next" and "Back" buttons.
-                                                                                         - When finished, the main interactive screen is shown.
-                                                                                      
-                                                                                      3. Main Interactive Screen:
-                                                                                         - Contains two scenario pages: Scenario 1 (California) and Scenario 2 (San Mateo County).
-                                                                                         - The UI updates based on cardCount; each button press sends a corresponding command.
-                                                                                      
-                                                                                      4. Modal Popups:
-                                                                                         - Congratulatory modal appears at key thresholds. On closing the modal, automatic transition occurs.
-                                                                                      
-                                                                                      5. Reset:
-                                                                                         - The "Restart" button resets the exhibit to the Start Screen.
-                                                                                      
-                                                                                      6. WebSocket Integration:
-                                                                                         - Sends and receives commands between the website and the Node.js server/Arduino.
-                                                                                      --------------------------------------------------------------------------------
-                                                                                    */
-
         // ------------------------------
         // Helper: animateButton
         // ------------------------------
-        /**
-         * animateButton(button)
-         *
-         * Adds the "button-click" class to the button element to provide a pop animation,
-         * then removes it after 200 milliseconds.
-         *
-         * @param {HTMLElement} button - The button element to animate.
-         */
         function animateButton(button) {
             button.classList.add('button-click');
             setTimeout(function() {
@@ -496,15 +459,6 @@
         // ------------------------------
         // Helper: animateElement
         // ------------------------------
-        /**
-         * animateElement(element, animationClass, duration)
-         *
-         * Adds the specified animation class to an element and removes it after the specified duration.
-         *
-         * @param {HTMLElement} element - The element to animate.
-         * @param {string} animationClass - The CSS class that defines the animation.
-         * @param {number} [duration=500] - The duration in milliseconds after which the class is removed.
-         */
         function animateElement(element, animationClass, duration) {
             duration = duration || 500;
             element.classList.add(animationClass);
@@ -528,12 +482,12 @@
         // ------------------------------
         // Global Variables and DOM References
         // ------------------------------
-        let cardCount = 0; // Progress variable: Scenario 1 starts at 0
+        let cardCount = 0;
         let currentInstruction = 1;
         const totalInstructions = 3;
 
         const startButton = document.getElementById('start-button');
-        const startScreen = document.getElementById('start-screen');
+        //const startScreen = document.getElementById('start-screen');
         const instructionContainer = document.getElementById('instruction-container');
         const instructionScreens = document.getElementsByClassName('instruction-screen');
         const instructionBack = document.getElementById('instruction-back');
@@ -561,27 +515,14 @@
         const playAgainButton = document.getElementById('play-again');
 
         // ------------------------------
-        // Board Command Configuration for Sequential Command Sending
+        // Board Command Configuration
         // ------------------------------
         const boardCommands = ["A1", "A2", "C1", "C2", "D1", "D2", "D3", "E1", "E2", "F1"];
         let boardIndex = 0;
 
-        /**
-         * sendCommand(color)
-         *
-         * Constructs a command string using the current board identifier from boardCommands
-         * and the provided color ("green" or "red"). The command is prefixed with the expected
-         * "FROM NANO X:" string, where X is the board letter (derived from the board identifier).
-         * The command is then sent via WebSocket to the Node.js server.
-         *
-         * @param {string} color - The LED color command ("green" or "red").
-         */
         function sendCommand(color) {
-            // Get the current board command (e.g., "A1")
             const boardCmd = boardCommands[boardIndex];
-            // Derive the board letter (first character)
             const boardLetter = boardCmd.charAt(0);
-            // Construct the full command string
             const command = "FROM NANO " + boardLetter + ": " + boardCmd + "_" + color.toUpperCase();
             socket.send(command);
             console.log("Sent command:", command);
@@ -603,7 +544,6 @@
         }
 
         function updateUI() {
-            // Scenario 1: Show up to 3 cards (California)
             let caGreen = cardCount <= 3 ? cardCount : 3;
             createCards(cardsCA, caGreen);
             if (scenario1Page.style.display !== 'none') {
@@ -619,7 +559,6 @@
                     messageCA.textContent = "";
                 }
             }
-            // Scenario 2: Show full progress (San Mateo County)
             let smGreen = cardCount >= 3 ? cardCount : 0;
             createCards(cardsSM, smGreen);
             if (cardCount === 6) {
@@ -637,12 +576,12 @@
         }
 
         // ------------------------------
-        // Reset Function: Resets UI and Variables to Start State
+        // Reset Function
         // ------------------------------
         function resetExhibit() {
             cardCount = 0;
             currentInstruction = 1;
-            boardIndex = 0; // Reset board order sequence
+            boardIndex = 0;
             instructionContainer.style.display = 'none';
             mainScreen.style.display = 'none';
             scenario1Page.style.display = 'none';
@@ -660,6 +599,42 @@
         // ------------------------------
         // Instruction Navigation Functions
         // ------------------------------
+        const startScreen = document.getElementById('start-screen');
+        const instructionScreen1 = document.getElementById('instruction-screen-1');
+        const instructionScreen2 = document.getElementById('instruction-screen-2');
+        const instructionScreen3 = document.getElementById('instruction-screen-3');
+
+        document.getElementById('start-button').addEventListener('click', () => {
+            startScreen.style.display = 'none';
+            instructionScreen1.style.display = 'flex';
+        });
+
+        document.getElementById('instruction1-next').addEventListener('click', () => {
+            instructionScreen1.style.display = 'none';
+            instructionScreen2.style.display = 'flex';
+        });
+
+        document.getElementById('instruction2-back').addEventListener('click', () => {
+            instructionScreen2.style.display = 'none';
+            instructionScreen1.style.display = 'flex';
+        });
+
+        document.getElementById('instruction2-next').addEventListener('click', () => {
+            instructionScreen2.style.display = 'none';
+            instructionScreen3.style.display = 'flex';
+        });
+
+        document.getElementById('instruction3-back').addEventListener('click', () => {
+            instructionScreen3.style.display = 'none';
+            instructionScreen2.style.display = 'flex';
+        });
+
+        document.getElementById('instruction3-continue').addEventListener('click', () => {
+            instructionScreen3.style.display = 'none';
+            // Here you would normally display your main interactive screen.
+            console.log('Continue to main interactive screen');
+        });
+
         function showInstructionScreen(index) {
             currentInstruction = index;
             for (let i = 0; i < instructionScreens.length; i++) {
@@ -722,38 +697,30 @@
             clickSound.play();
             showScenario1();
         });
-
         addCardButton.addEventListener('click', () => {
             animateButton(addCardButton);
             clickSound.play();
             if (cardCount < 10) {
                 cardCount++;
                 updateUI();
-                // Send command via WebSocket for green card
                 sendCommand("green");
             }
         });
         const scenario1Back = document.getElementById('scenario1-back');
-
         scenario1Back.addEventListener('click', () => {
             animateButton(scenario1Back);
             clickSound.play();
-            // Hide Scenario 1 and main interactive screen
             scenario1Page.style.display = 'none';
             mainScreen.style.display = 'none';
-            // Show instruction container and jump to Instruction #3
             instructionContainer.style.display = 'flex';
             showInstructionScreen(totalInstructions);
         });
-
-
         removeCardButton.addEventListener('click', () => {
             animateButton(removeCardButton);
             clickSound.play();
             if (cardCount > 0) {
                 cardCount--;
                 updateUI();
-                // Send command via WebSocket for red card
                 sendCommand("red");
             }
         });
@@ -772,7 +739,6 @@
         }
         modalClose.addEventListener('click', () => {
             hideModal();
-            // Automatic transition: if in Scenario 1, switch to Scenario 2 and play start sound.
             if (scenario1Page.style.display !== 'none') {
                 showScenario2();
                 scenarioSMCSound_Start.play();
@@ -817,20 +783,9 @@
         // ------------------------------
         // sendCommand(color)
         // ------------------------------
-        /**
-         * Constructs a command string using the current board command from the boardCommands array
-         * and the provided color ("green" or "red"). The command is prefixed with the expected
-         * "FROM NANO X:" string (where X is the board letter derived from the board identifier)
-         * and then sent via the WebSocket to the Node.js server, which forwards it to the Arduino.
-         *
-         * For example, if boardCommands[boardIndex] is "A1" and color is "green",
-         * the function sends: "FROM NANO A: A1_GREEN".
-         *
-         * @param {string} color - The LED color command ("green" or "red").
-         */
         function sendCommand(color) {
-            const boardCmd = boardCommands[boardIndex]; // e.g. "A1"
-            const command = boardCmd + "_" + color.toUpperCase(); // e.g. "A1_GREEN"
+            const boardCmd = boardCommands[boardIndex];
+            const command = boardCmd + "_" + color.toUpperCase();
             socket.send(command);
             console.log("Sent command:", command);
             boardIndex = (boardIndex + 1) % boardCommands.length;
