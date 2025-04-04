@@ -7,7 +7,9 @@
     <!-- Include a decorative font for a classical look -->
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&display=swap" rel="stylesheet">
     <style>
-        /* Base Styles */
+        /* ------------------------------
+       Base Styles
+       ------------------------------ */
         
         body {
             font-family: Arial, sans-serif;
@@ -42,34 +44,46 @@
             transform: scale(1.1);
             background-color: #004d40;
         }
-        /* Start Screen */
+        /* ------------------------------
+       Start Screen
+       ------------------------------ */
         
         #start-screen {
+            position: relative;
+            /* Establishes a positioning context */
             height: 100vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            background: #e0f7fa;
+            background: url('assets/StartScreen.png') no-repeat center center;
+            background-size: cover;
             text-align: center;
             animation: fadeIn 1s forwards;
         }
-        
+        /* i decided to comment out the h1 tag because it was not used in the design
         #start-screen h1 {
             font-family: 'Cinzel', serif;
             font-size: 20vh;
-            /* Adjusted so text and button fit without scrolling */
             margin: 0;
             line-height: 1;
             color: #333;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
         }
+        */
         
         #start-screen button {
-            margin-top: 20px;
+            position: absolute;
+            /* Positions the button relative to #start-screen */
+            bottom: 40px;
+            /* Adjust distance from the bottom */
+            right: 40px;
+            /* Adjust distance from the right */
             font-family: 'Cinzel', serif;
-            font-size: 2rem;
-            padding: 20px 40px;
+            font-size: 2.5rem;
+            /* Increased font size for a bigger appearance */
+            padding: 25px 50px;
+            /* Increased padding */
             background: linear-gradient(45deg, #ff8a00, #e52e71);
             color: #fff;
             border: none;
@@ -82,7 +96,9 @@
             transform: scale(1.1);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
         }
-        /* Instruction Container */
+        /* ------------------------------
+       Instruction Container
+       ------------------------------ */
         
         #instruction-container {
             display: none;
@@ -135,7 +151,9 @@
             transform: scale(1.1);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
         }
-        /* Main Interactive Screen */
+        /* ------------------------------
+       Main Interactive Screen
+       ------------------------------ */
         
         #main-screen {
             display: none;
@@ -143,7 +161,9 @@
             overflow-y: auto;
             animation: fadeIn 0.5s forwards;
         }
-        /* Controls: Add/Remove Card Buttons */
+        /* ------------------------------
+       Controls: Add/Remove Card Buttons
+       ------------------------------ */
         
         #controls {
             text-align: center;
@@ -166,12 +186,13 @@
             transform: scale(1.1);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
         }
-        /* Scenario Pages */
+        /* ------------------------------
+       Scenario Pages
+       ------------------------------ */
         
         #scenario1-page,
         #scenario2-page {
             height: calc(100vh - 80px);
-            /* Adjusting for controls and header */
             display: none;
             flex-direction: column;
             justify-content: center;
@@ -210,13 +231,13 @@
             height: 75px;
             border: 2px solid #555;
             margin: 5px;
-            background: #e57373;
+            background: #EA5F57;
             border-radius: 4px;
             transition: background 0.3s, transform 0.3s;
         }
         
         .card.green {
-            background: #66bb6a;
+            background: #B0BD5E;
             transform: scale(1.05);
         }
         
@@ -225,7 +246,9 @@
             font-weight: bold;
             color: #424242;
         }
-        /* Scenario Navigation */
+        /* ------------------------------
+       Scenario Navigation
+       ------------------------------ */
         
         #scenario-nav {
             margin-top: 20px;
@@ -247,6 +270,9 @@
             transform: scale(1.1);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
         }
+        /* ------------------------------
+       Animations and Modal Styles
+       ------------------------------ */
         
         @keyframes fadeIn {
             from {
@@ -256,7 +282,6 @@
                 opacity: 1;
             }
         }
-        /* Button click animation */
         
         .button-click {
             animation: pop 0.2s ease;
@@ -295,7 +320,6 @@
                 transform: translateX(0);
             }
         }
-        /* Modal styles */
         
         #modal,
         #finalModal {
@@ -342,7 +366,7 @@
 
     <!-- Start Screen -->
     <div id="start-screen">
-        <h1>WELCOME TO SIM MATEO</h1>
+        <!--<h1>WELCOME TO SIM MATEO</h1>-->
         <button id="start-button">START</button>
     </div>
 
@@ -385,8 +409,11 @@
                 <div class="message" id="message-ca"></div>
             </div>
             <div id="scenario-nav">
+                <button id="scenario1-back">Back</button>
                 <button id="scenario1-next">Next</button>
             </div>
+
+
         </div>
         <!-- Scenario 2 Page -->
         <div id="scenario2-page" style="display: none;">
@@ -422,7 +449,73 @@
     </div>
 
     <script>
-        // Sound effects (ensure these files are in the same folder)
+        /* 
+                                                                                      --------------------------------------------------------------------------------
+                                                                                      ORDER OF SCENARIOS & ACTIONS:
+                                                                                      
+                                                                                      1. Start Screen:
+                                                                                         - Displayed upon page load. User clicks "START" to move to instructions.
+                                                                                      
+                                                                                      2. Instruction Phase:
+                                                                                         - Multiple instruction screens are navigable with "Next" and "Back" buttons.
+                                                                                         - When finished, the main interactive screen is shown.
+                                                                                      
+                                                                                      3. Main Interactive Screen:
+                                                                                         - Contains two scenario pages: Scenario 1 (California) and Scenario 2 (San Mateo County).
+                                                                                         - The UI updates based on cardCount; each button press sends a corresponding command.
+                                                                                      
+                                                                                      4. Modal Popups:
+                                                                                         - Congratulatory modal appears at key thresholds. On closing the modal, automatic transition occurs.
+                                                                                      
+                                                                                      5. Reset:
+                                                                                         - The "Restart" button resets the exhibit to the Start Screen.
+                                                                                      
+                                                                                      6. WebSocket Integration:
+                                                                                         - Sends and receives commands between the website and the Node.js server/Arduino.
+                                                                                      --------------------------------------------------------------------------------
+                                                                                    */
+
+        // ------------------------------
+        // Helper: animateButton
+        // ------------------------------
+        /**
+         * animateButton(button)
+         *
+         * Adds the "button-click" class to the button element to provide a pop animation,
+         * then removes it after 200 milliseconds.
+         *
+         * @param {HTMLElement} button - The button element to animate.
+         */
+        function animateButton(button) {
+            button.classList.add('button-click');
+            setTimeout(function() {
+                button.classList.remove('button-click');
+            }, 200);
+        }
+
+        // ------------------------------
+        // Helper: animateElement
+        // ------------------------------
+        /**
+         * animateElement(element, animationClass, duration)
+         *
+         * Adds the specified animation class to an element and removes it after the specified duration.
+         *
+         * @param {HTMLElement} element - The element to animate.
+         * @param {string} animationClass - The CSS class that defines the animation.
+         * @param {number} [duration=500] - The duration in milliseconds after which the class is removed.
+         */
+        function animateElement(element, animationClass, duration) {
+            duration = duration || 500;
+            element.classList.add(animationClass);
+            setTimeout(function() {
+                element.classList.remove(animationClass);
+            }, duration);
+        }
+
+        // ------------------------------
+        // Sound Effects Setup
+        // ------------------------------
         const clickSound = new Audio('SoundWindowsNavigationStart.wav');
         const scenarioCASound_10 = new Audio('SoundScenarioCA_10.mp3');
         const scenarioCASound_win = new Audio('SoundScenarioCA_win.mp3');
@@ -432,15 +525,13 @@
         const wrongSound = new Audio('SoundWindowsCriticalStop.mp3');
         const welcomeSound = new Audio('SoundWelcome.mp3');
 
-        // Global variable for card count (progress is continuous)
-        // Start with cardCount = 0 (Scenario 1 starts at 0)
-        let cardCount = 0;
-
-        // Instruction navigation variables
+        // ------------------------------
+        // Global Variables and DOM References
+        // ------------------------------
+        let cardCount = 0; // Progress variable: Scenario 1 starts at 0
         let currentInstruction = 1;
         const totalInstructions = 3;
 
-        // Get elements for instructions and interactive screens
         const startButton = document.getElementById('start-button');
         const startScreen = document.getElementById('start-screen');
         const instructionContainer = document.getElementById('instruction-container');
@@ -451,37 +542,57 @@
         const header = document.getElementById('header');
         const restartButton = document.getElementById('restart-button');
 
-        // Scenario 1 elements
         const scenario1Page = document.getElementById('scenario1-page');
         const cardsCA = document.getElementById('cards-ca');
         const messageCA = document.getElementById('message-ca');
         const scenario1Next = document.getElementById('scenario1-next');
-        // Scenario 2 elements
+
         const scenario2Page = document.getElementById('scenario2-page');
         const cardsSM = document.getElementById('cards-sm');
         const messageSM = document.getElementById('message-sm');
         const scenario2Back = document.getElementById('scenario2-back');
-        // Controls (Add/Remove)
+
         const addCardButton = document.getElementById('add-card');
         const removeCardButton = document.getElementById('remove-card');
-        // Modal elements
+
         const modal = document.getElementById('modal');
         const modalClose = document.getElementById('modal-close');
         const finalModal = document.getElementById('finalModal');
         const playAgainButton = document.getElementById('play-again');
 
-        // Helper: animate button click
-        function animateButton(button) {
-            button.classList.add('button-click');
-            setTimeout(() => button.classList.remove('button-click'), 200);
+        // ------------------------------
+        // Board Command Configuration for Sequential Command Sending
+        // ------------------------------
+        const boardCommands = ["A1", "A2", "C1", "C2", "D1", "D2", "D3", "E1", "E2", "F1"];
+        let boardIndex = 0;
+
+        /**
+         * sendCommand(color)
+         *
+         * Constructs a command string using the current board identifier from boardCommands
+         * and the provided color ("green" or "red"). The command is prefixed with the expected
+         * "FROM NANO X:" string, where X is the board letter (derived from the board identifier).
+         * The command is then sent via WebSocket to the Node.js server.
+         *
+         * @param {string} color - The LED color command ("green" or "red").
+         */
+        function sendCommand(color) {
+            // Get the current board command (e.g., "A1")
+            const boardCmd = boardCommands[boardIndex];
+            // Derive the board letter (first character)
+            const boardLetter = boardCmd.charAt(0);
+            // Construct the full command string
+            const command = "FROM NANO " + boardLetter + ": " + boardCmd + "_" + color.toUpperCase();
+            socket.send(command);
+            console.log("Sent command:", command);
+            boardIndex = (boardIndex + 1) % boardCommands.length;
         }
-        // Helper: animate element
-        function animateElement(element, animationClass, duration = 500) {
-            element.classList.add(animationClass);
-            setTimeout(() => element.classList.remove(animationClass), duration);
-        }
-        // Create cards function
-        function createCards(container, greenCount, total = 10) {
+
+        // ------------------------------
+        // UI Update Functions
+        // ------------------------------
+        function createCards(container, greenCount, total) {
+            total = total || 10;
             container.innerHTML = '';
             for (let i = 0; i < total; i++) {
                 const card = document.createElement('div');
@@ -490,38 +601,9 @@
                 container.appendChild(card);
             }
         }
-        // Show/hide modals
-        function showModal() {
-            modal.style.display = 'block';
-        }
 
-        function hideModal() {
-            modal.style.display = 'none';
-        }
-        modalClose.addEventListener('click', () => {
-            hideModal();
-            // Automatic transition: if we are in Scenario 1, then switch to Scenario 2.
-            if (scenario1Page.style.display !== 'none') {
-                showScenario2();
-                scenarioSMCSound_Start.play();
-            }
-        });
-
-        function showFinalModal() {
-            finalModal.style.display = 'block';
-        }
-
-        function hideFinalModal() {
-            finalModal.style.display = 'none';
-        }
-        playAgainButton.addEventListener('click', () => {
-            hideFinalModal();
-            resetExhibit();
-        });
-
-        // Update UI: update both scenario pages based on cardCount
         function updateUI() {
-            // Scenario 1: display up to 3 cards (for California)
+            // Scenario 1: Show up to 3 cards (California)
             let caGreen = cardCount <= 3 ? cardCount : 3;
             createCards(cardsCA, caGreen);
             if (scenario1Page.style.display !== 'none') {
@@ -537,7 +619,7 @@
                     messageCA.textContent = "";
                 }
             }
-            // Scenario 2: display progress as the full cardCount if cardCount is at least 3.
+            // Scenario 2: Show full progress (San Mateo County)
             let smGreen = cardCount >= 3 ? cardCount : 0;
             createCards(cardsSM, smGreen);
             if (cardCount === 6) {
@@ -553,34 +635,31 @@
                 messageSM.textContent = "";
             }
         }
-        // Reset exhibit: bring user back to the welcome (start) screen and start everything from scratch.
+
+        // ------------------------------
+        // Reset Function: Resets UI and Variables to Start State
+        // ------------------------------
         function resetExhibit() {
-            // Reset progress and navigation variables
             cardCount = 0;
             currentInstruction = 1;
-
-            // Hide interactive screens and modals
+            boardIndex = 0; // Reset board order sequence
             instructionContainer.style.display = 'none';
             mainScreen.style.display = 'none';
             scenario1Page.style.display = 'none';
             scenario2Page.style.display = 'none';
             modal.style.display = 'none';
             finalModal.style.display = 'none';
-
-            // Hide the header (Restart button) so it won't appear on the welcome screen
             header.style.display = 'none';
-
-            // Clear any messages and progress bars
             messageCA.textContent = "";
             messageSM.textContent = "";
             createCards(cardsCA, 0);
             createCards(cardsSM, 0);
-
-            // Show the start screen (welcome screen)
             startScreen.style.display = 'flex';
         }
 
-        // Instruction navigation functions
+        // ------------------------------
+        // Instruction Navigation Functions
+        // ------------------------------
         function showInstructionScreen(index) {
             currentInstruction = index;
             for (let i = 0; i < instructionScreens.length; i++) {
@@ -607,7 +686,10 @@
                 updateUI();
             }
         });
-        // Scenario navigation functions
+
+        // ------------------------------
+        // Scenario Navigation Functions
+        // ------------------------------
         function showScenario1() {
             scenario1Page.style.display = 'flex';
             scenario2Page.style.display = 'none';
@@ -617,7 +699,10 @@
             scenario1Page.style.display = 'none';
             scenario2Page.style.display = 'flex';
         }
-        // Event handlers
+
+        // ------------------------------
+        // Event Handlers
+        // ------------------------------
         startButton.addEventListener('click', () => {
             animateButton(startButton);
             clickSound.play();
@@ -637,42 +722,78 @@
             clickSound.play();
             showScenario1();
         });
-        // Interactive card buttons (controls)
+
         addCardButton.addEventListener('click', () => {
             animateButton(addCardButton);
             clickSound.play();
             if (cardCount < 10) {
                 cardCount++;
                 updateUI();
+                // Send command via WebSocket for green card
+                sendCommand("green");
             }
         });
+        const scenario1Back = document.getElementById('scenario1-back');
+
+        scenario1Back.addEventListener('click', () => {
+            animateButton(scenario1Back);
+            clickSound.play();
+            // Hide Scenario 1 and main interactive screen
+            scenario1Page.style.display = 'none';
+            mainScreen.style.display = 'none';
+            // Show instruction container and jump to Instruction #3
+            instructionContainer.style.display = 'flex';
+            showInstructionScreen(totalInstructions);
+        });
+
+
         removeCardButton.addEventListener('click', () => {
             animateButton(removeCardButton);
             clickSound.play();
-
-            // Store the current card count before subtracting.
-            let current = cardCount;
-
-            // In Scenario 1: play wrong sound only if current is 0 (red pressed first) or 2 (removing after 2 green).
-            if (scenario1Page.style.display !== 'none') {
-                if (current === 0 || current === 2) {
-                    wrongSound.play();
-                }
+            if (cardCount > 0) {
+                cardCount--;
+                updateUI();
+                // Send command via WebSocket for red card
+                sendCommand("red");
             }
-            // In Scenario 2: every removal should play the wrong sound.
-            else if (scenario2Page.style.display !== 'none') {
-                wrongSound.play();
-            }
-
-            // Subtract one from cardCount, but don't allow it to go below 0.
-            cardCount = Math.max(0, cardCount - 1);
-            updateUI();
         });
-
         restartButton.addEventListener('click', resetExhibit);
         resetExhibit();
 
-        // --- WebSocket Integration for Arduino Signals ---
+        // ------------------------------
+        // Modal and Final Modal Handling
+        // ------------------------------
+        function showModal() {
+            modal.style.display = 'block';
+        }
+
+        function hideModal() {
+            modal.style.display = 'none';
+        }
+        modalClose.addEventListener('click', () => {
+            hideModal();
+            // Automatic transition: if in Scenario 1, switch to Scenario 2 and play start sound.
+            if (scenario1Page.style.display !== 'none') {
+                showScenario2();
+                scenarioSMCSound_Start.play();
+            }
+        });
+
+        function showFinalModal() {
+            finalModal.style.display = 'block';
+        }
+
+        function hideFinalModal() {
+            finalModal.style.display = 'none';
+        }
+        playAgainButton.addEventListener('click', () => {
+            hideFinalModal();
+            resetExhibit();
+        });
+
+        // ------------------------------
+        // WebSocket Integration
+        // ------------------------------
         const socket = new WebSocket("ws://localhost:80");
         socket.onopen = () => {
             console.log("Connected to SIM Mateo WebSocket server");
@@ -692,6 +813,28 @@
         socket.onclose = () => {
             console.log("WebSocket connection closed");
         };
+
+        // ------------------------------
+        // sendCommand(color)
+        // ------------------------------
+        /**
+         * Constructs a command string using the current board command from the boardCommands array
+         * and the provided color ("green" or "red"). The command is prefixed with the expected
+         * "FROM NANO X:" string (where X is the board letter derived from the board identifier)
+         * and then sent via the WebSocket to the Node.js server, which forwards it to the Arduino.
+         *
+         * For example, if boardCommands[boardIndex] is "A1" and color is "green",
+         * the function sends: "FROM NANO A: A1_GREEN".
+         *
+         * @param {string} color - The LED color command ("green" or "red").
+         */
+        function sendCommand(color) {
+            const boardCmd = boardCommands[boardIndex]; // e.g. "A1"
+            const command = boardCmd + "_" + color.toUpperCase(); // e.g. "A1_GREEN"
+            socket.send(command);
+            console.log("Sent command:", command);
+            boardIndex = (boardIndex + 1) % boardCommands.length;
+        }
     </script>
 </body>
 
