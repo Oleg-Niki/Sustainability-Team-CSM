@@ -5,14 +5,14 @@
     <meta charset="UTF-8">
     <title>SIM Mateo - Clean Energy Exhibit</title>
     <!-- Include a decorative font for a classical look -->
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Josefin+Sans&display=swap" rel="stylesheet">
     <style>
         /* ------------------------------
        Base Styles
        ------------------------------ */
         
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Josefin Sans', sans-serif;
             margin: 0;
             padding: 0;
             background: #e0f7fa;
@@ -147,7 +147,7 @@
         #instruction-nav button {
             position: absolute;
             bottom: 40px;
-            font-family: 'Cinzel', serif;
+            font-family: 'Josefin Sans', sans-serif;
             font-size: 2.5rem;
             padding: 25px 50px;
             background: linear-gradient(45deg, #ff8a00, #e52e71);
@@ -167,7 +167,7 @@
        ------------------------------ */
         
         .instruction-btn {
-            font-family: 'Cinzel', serif;
+            font-family: 'Josefin Sans', sans-serif;
             font-size: 2.5rem;
             padding: 25px 50px;
             background: linear-gradient(45deg, #ff8a00, #e52e71);
@@ -316,7 +316,7 @@
         }
         
         #scenario-nav button {
-            font-family: 'Cinzel', serif;
+            font-family: 'Josefin Sans', sans-serif;
             font-size: 2.5rem;
             padding: 25px 50px;
             background: linear-gradient(45deg, #ff8a00, #e52e71);
@@ -463,6 +463,10 @@
             <button id="add-card">Green Card</button>
             <button id="remove-card">Red Card</button>
         </div>
+        <!-- Win Animation -->
+        <div id="sunburst" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 9999;">
+            <img src="/assets/Sun Burst.gif" alt="Sun Burst Animation">
+        </div>
         <!-- Scenario 1 Page -->
         <div id="scenario1-page">
             <div class="scenario">
@@ -470,7 +474,7 @@
                 <img src="assets/california.png" alt="Transparent California Overlay" class="transparent-overlay">
                 <div class="cards-container" id="cards-ca"></div>
                 <div class="message" id="message-ca"></div>
-                <h2>What percentage of California's electricity is clean? (e.g. solar, hydro, wind, nuclear)</h2>
+                <h2 style="text-align: center;"> What percentage of California's electricity is clean? (e.g. solar, hydro, wind, nuclear)</h2>
             </div>
             <div id="scenario-nav">
                 <button id="scenario1-back">Back</button>
@@ -486,7 +490,7 @@
                 <img src="assets/smc.png" alt="Transparent SMC Overlay" class="transparent-overlay">
                 <div class="cards-container" id="cards-sm"></div>
                 <div class="message" id="message-sm"></div>
-                <h2>What percentage of San Mateo County's electricity is clean?</h2>
+                <h2 style="text-align: center;">What percentage of San Mateo County's electricity is clean?</h2>
             </div>
             <div id="scenario-nav">
                 <button id="scenario2-back">Back</button>
@@ -515,32 +519,21 @@
     </div>
 
     <script>
-        /* 
-                                                                                                                                                                                                                                                                                                                                                                                                                                      --------------------------------------------------------------------------------
-                                                                                                                                                                                                                                                                                                                                                                                                                                      ORDER OF SCENARIOS & ACTIONS:
-                                                                                                                                                                                                                                                                                                                                                                                                                                      
-                                                                                                                                                                                                                                                                                                                                                                                                                                      1. Start Screen:
-                                                                                                                                                                                                                                                                                                                                                                                                                                         - Displayed upon page load. User clicks "START" to move to instructions.
-                                                                                                                                                                                                                                                                                                                                                                                                                                      
-                                                                                                                                                                                                                                                                                                                                                                                                                                      2. Instruction Phase:
-                                                                                                                                                                                                                                                                                                                                                                                                                                         - Multiple instruction screens are navigable with "Next" and "Back" buttons.
-                                                                                                                                                                                                                                                                                                                                                                                                                                         - When finished, the main interactive screen is shown.
-                                                                                                                                                                                                                                                                                                                                                                                                                                      
-                                                                                                                                                                                                                                                                                                                                                                                                                                      3. Main Interactive Screen:
-                                                                                                                                                                                                                                                                                                                                                                                                                                         - Contains two scenario pages: Scenario 1 (California) and Scenario 2 (San Mateo County).
-                                                                                                                                                                                                                                                                                                                                                                                                                                         - The UI updates based on cardCount; each button press sends a corresponding command.
-                                                                                                                                                                                                                                                                                                                                                                                                                                      
-                                                                                                                                                                                                                                                                                                                                                                                                                                      4. Modal Popups:
-                                                                                                                                                                                                                                                                                                                                                                                                                                         - Congratulatory modal appears at key thresholds. On closing the modal, automatic transition occurs.
-                                                                                                                                                                                                                                                                                                                                                                                                                                      
-                                                                                                                                                                                                                                                                                                                                                                                                                                      5. Reset:
-                                                                                                                                                                                                                                                                                                                                                                                                                                         - The "Restart" button resets the exhibit to the Start Screen.
-                                                                                                                                                                                                                                                                                                                                                                                                                                      
-                                                                                                                                                                                                                                                                                                                                                                                                                                      6. WebSocket Integration:
-                                                                                                                                                                                                                                                                                                                                                                                                                                         - Sends and receives commands between the website and the Node.js server/Arduino.
-                                                                                                                                                                                                                                                                                                                                                                                                                                      --------------------------------------------------------------------------------
-                                                                                                                                                                                                                                                                                                                                                                                                                                    */
-
+        /**
+         *1. ORDER OF SCENARIOS & ACTIONS:
+         *- Displayed upon page load. User clicks "START" to move to instructions.
+         *2. Instruction Phase:
+         *- Multiple instruction screens are navigable with "Next" and "Back" buttons.
+         *- When finished, the main interactive screen is shown.
+         *3. Main Interactive Screen:
+         *- Contains two scenario pages: Scenario 1 (California) and Scenario 2 (San Mateo County).
+         *- The UI updates based on cardCount; each button press sends a corresponding command.
+         *4. Modal Popups:
+         *- Congratulatory modal appears at key thresholds. On closing the modal, automatic transition occurs.5. Reset:
+         *- The "Restart" button resets the exhibit to the Start Screen.
+         *6. WebSocket Integration:
+         *- Sends and receives commands between the website and the Node.js server/Arduino.
+         */
         // ------------------------------
         // Helper: animateButton
         // ------------------------------
@@ -582,18 +575,23 @@
         // ------------------------------
         // Sound Effects Setup
         // ------------------------------
-        const clickSound = new Audio('SoundWindowsNavigationStart.wav');
-        const scenarioCASound_10 = new Audio('SoundScenarioCA_10.mp3');
-        const scenarioCASound_win = new Audio('SoundScenarioCA_win.mp3');
-        const scenarioSMCSound_Start = new Audio('SoundScenarioSMC_Start.mp3');
-        const scenarioSMCSound_60 = new Audio('SoundScenarioSMC_60.mp3');
-        const scenarioSMCSound_win = new Audio('SoundScenarioSMC_win.mp3');
-        const wrongSound = new Audio('SoundWindowsCriticalStop.mp3');
-        const welcomeSound = new Audio('SoundWelcome.mp3');
+        const clickSound = new Audio('/assets/SoundWindowsNavigationStart.wav');
+        const scenarioCASound_Start = new Audio('/assets/05-California.mp3');
+        const scenarioCASound_30 = new Audio('/assets/SoundScenarioCA_30.mp3');
+        const scenarioCASound_win = new Audio('/assets/SoundScenarioCA_win.mp3');
+        const scenarioSMCSound_Start = new Audio('/assets/SoundScenarioSMC_Start.mp3');
+        const scenarioSMCSound_60 = new Audio('/assets/SoundScenarioSMC_60.mp3');
+        const scenarioSMCSound_win = new Audio('/assets/SoundScenarioSMC_win.mp3');
+        const wrongSound = new Audio('/assets/SoundWindowsCriticalStop.mp3');
+        const welcomeSound = new Audio('/assets/01-Welcome.mp3');
+        const instruction1Sound = new Audio('/assets/02-Green Card.mp3');
+        const instruction2Sound = new Audio('/assets/03-Red Card.mp3');
+        const instruction3Sound = new Audio('/assets/04-Tap.mp3');
 
         // ------------------------------
         // Global Variables and DOM References
         // ------------------------------
+        let currentSound = null; // Variable to track the currently playing sound
         let cardCount = 0; // Progress variable: Scenario 1 starts at 0
         let currentInstruction = 1;
         const totalInstructions = 3;
@@ -653,6 +651,19 @@
             console.log("Sent command:", command);
             boardIndex = (boardIndex + 1) % boardCommands.length;
         }
+        // ------------------------------
+        // Sound managment: playSound(newSound)
+        // ------------------------------
+        function playSound(newSound) {
+            // Pause and reset the current sound if it's playing
+            if (currentSound && !currentSound.paused) {
+                currentSound.pause();
+                currentSound.currentTime = 0;
+            }
+            // Set and play the new sound
+            currentSound = newSound;
+            newSound.play();
+        }
 
         // ------------------------------
         // UI Update Functions
@@ -669,17 +680,25 @@
         }
 
         function updateUI() {
-            // Scenario 1: Show up to 3 cards (California)
-            let caGreen = cardCount <= 3 ? cardCount : 3;
+            // Scenario 1: Show up to 5 cards (California)
+            let caGreen = cardCount <= 5 ? cardCount : 5;
             createCards(cardsCA, caGreen);
             if (scenario1Page.style.display !== 'none') {
-                if (cardCount === 1) {
-                    messageCA.textContent = "CA has reached 10% clean energy at 2003!";
-                    scenarioCASound_10.play();
+                if (cardCount === 3) {
+                    messageCA.textContent = "California state has reached 30% clean energy by 1985!";
+                    playSound(scenarioCASound_30);
                     animateElement(messageCA, 'button-click', 300);
-                } else if (cardCount === 3) {
-                    messageCA.textContent = "That's right! California state currently uses about 35% clean electricity.";
-                    scenarioCASound_win.play();
+                } else if (cardCount === 5) {
+                    messageCA.textContent = "That’s right! California currently uses about 56% of clean electricity!";
+                    playSound(scenarioCASound_win);
+                    // Show the Sun Burst animation
+                    const sunburstEl = document.getElementById('sunburst');
+                    sunburstEl.style.display = 'block';
+
+                    // Hide the animation after 3 seconds (adjust as needed)
+                    setTimeout(() => {
+                        sunburstEl.style.display = 'none';
+                    }, 3000);
                     setTimeout(showModal, 500);
                 } else {
                     messageCA.textContent = "";
@@ -690,11 +709,11 @@
             createCards(cardsSM, smGreen);
             if (cardCount === 6) {
                 messageSM.textContent = "You're getting close! San Mateo reached 60% clean electricity in 2020";
-                scenarioSMCSound_60.play();
+                playSound(scenarioSMCSound_60);
                 animateElement(messageSM, 'button-click', 300);
             } else if (cardCount === 9) {
                 messageSM.textContent = "You got it! San Mateo serves 100% clean electricity – leading the nation!";
-                scenarioSMCSound_win.play();
+                playSound(scenarioSMCSound_win);
                 animateElement(messageSM, 'button-click', 300);
                 setTimeout(showFinalModal, 1000);
             } else {
@@ -734,6 +753,23 @@
             document.getElementById('instruction-screen-' + index).style.display = 'flex';
             instructionBack.style.display = (index === 1) ? 'none' : 'inline-block';
             instructionNext.textContent = (index === totalInstructions) ? 'Continue' : 'Next';
+            // Play the corresponding instruction sound based on the screen index
+            switch (index) {
+                case 1:
+                    setTimeout(() => {
+                        playSound(instruction1Sound);
+                    }, 5200);
+                    break;
+                case 2:
+                    playSound(instruction2Sound);
+                    break;
+                case 3:
+                    playSound(instruction3Sound);
+                    break;
+                default:
+                    break;
+            }
+
         }
         instructionBack.addEventListener('click', () => {
             animateButton(instructionBack);
@@ -759,6 +795,7 @@
         function showScenario1() {
             scenario1Page.style.display = 'flex';
             scenario2Page.style.display = 'none';
+            playSound(scenarioCASound_Start);
         }
 
         function showScenario2() {
@@ -771,8 +808,8 @@
         // ------------------------------
         startButton.addEventListener('click', () => {
             animateButton(startButton);
-            clickSound.play();
-            welcomeSound.play();
+            playSound(clickSound);
+            playSound(welcomeSound);
             startScreen.style.display = 'none';
             header.style.display = 'block';
             instructionContainer.style.display = 'flex';
@@ -780,18 +817,18 @@
         });
         scenario1Next.addEventListener('click', () => {
             animateButton(scenario1Next);
-            clickSound.play();
+            playSound(clickSound);
             showScenario2();
         });
         scenario2Back.addEventListener('click', () => {
             animateButton(scenario2Back);
-            clickSound.play();
+            playSound(clickSound);
             showScenario1();
         });
 
         addCardButton.addEventListener('click', () => {
             animateButton(addCardButton);
-            clickSound.play();
+            playSound(clickSound);
             if (cardCount < 10) {
                 cardCount++;
                 updateUI();
@@ -803,7 +840,7 @@
 
         scenario1Back.addEventListener('click', () => {
             animateButton(scenario1Back);
-            clickSound.play();
+            playSound(clickSound);
             // Hide Scenario 1 and main interactive screen
             scenario1Page.style.display = 'none';
             mainScreen.style.display = 'none';
@@ -815,7 +852,7 @@
 
         removeCardButton.addEventListener('click', () => {
             animateButton(removeCardButton);
-            clickSound.play();
+            playSound(clickSound);
             if (cardCount > 0) {
                 cardCount--;
                 updateUI();
@@ -841,7 +878,7 @@
             // Automatic transition: if in Scenario 1, switch to Scenario 2 and play start sound.
             if (scenario1Page.style.display !== 'none') {
                 showScenario2();
-                scenarioSMCSound_Start.play();
+                playSound(scenarioSMCSound_Start);
             }
         });
 
