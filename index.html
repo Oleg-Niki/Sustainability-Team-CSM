@@ -248,6 +248,7 @@
             transform: translateX(-50%);
             max-width: 80%;
             height: auto;
+            opacity: 0.35;
         }
         
         #scenario1-page,
@@ -415,6 +416,15 @@
             #scenario1-page .scenario,
             #scenario2-page .scenario {
                 width: 95%;
+            }
+        }
+        
+        @media (max-width: 1024px) {
+            #instruction-nav button {
+                font-size: 2rem;
+                /* Reduce font size */
+                padding: 15px 30px;
+                /* Reduce padding */
             }
         }
     </style>
