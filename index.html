@@ -965,11 +965,19 @@
              * @param {string} color - The LED color command ("green" or "red").
              */
             function sendCommand(color) {
-                const boardCmd = boardCommands[boardIndex]; // e.g. "A1"
-                const command = boardCmd + "_" + color.toUpperCase(); // e.g. "A1_GREEN"
-                socket.send(command);
-                console.log("Sent command:", command);
+                const boardCmd = boardCommands[boardIndex];
+                // Create the board-specific command
+                const command1 = boardCmd + "_" + color.toUpperCase();
+                socket.send(command1);
+                console.log("Sent command:", command1);
+
+                // Update board index for next call
                 boardIndex = (boardIndex + 1) % boardCommands.length;
+
+                // Send the color-only command
+                const command2 = color.toUpperCase();
+                socket.send(command2);
+                console.log("Sent command:", command2);
             }
 
             function showTheEndScreen() {

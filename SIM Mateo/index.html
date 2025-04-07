@@ -785,10 +785,18 @@
         // ------------------------------
         function sendCommand(color) {
             const boardCmd = boardCommands[boardIndex];
-            const command = boardCmd + "_" + color.toUpperCase();
-            socket.send(command);
-            console.log("Sent command:", command);
+            // Create the board-specific command
+            const command1 = boardCmd + "_" + color.toUpperCase();
+            socket.send(command1);
+            console.log("Sent command:", command1);
+
+            // Update board index for next call
             boardIndex = (boardIndex + 1) % boardCommands.length;
+
+            // Send the color-only command
+            const command2 = color.toUpperCase();
+            socket.send(command2);
+            console.log("Sent command:", command2);
         }
     </script>
 </body>
