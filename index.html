@@ -977,26 +977,11 @@
             function sendCommand(color) {
                 const boardCmd = boardCommands[boardIndex];
                 const boardLetter = boardCmd.charAt(0);
-                // First message with the prefix
-                const command1 = "FROM NANO " + boardLetter + ": " + boardCmd + "_" + color.toUpperCase();
-                if (socket.readyState === WebSocket.OPEN) {
-                    socket.send(command1);
-                    console.log("Sent command:", command1);
-                } else {
-                    console.error("Socket not open for command:", command1);
-                }
-
-                // Update board index for next message
+                const command = boardCmd + "_" + color.toUpperCase();
+                // Append a newline before sending
+                socket.send(command + "\n");
+                console.log("Sent command:", command);
                 boardIndex = (boardIndex + 1) % boardCommands.length;
-
-                // Second message: just the color
-                const command2 = color.toUpperCase();
-                if (socket.readyState === WebSocket.OPEN) {
-                    socket.send(command2);
-                    console.log("Sent command:", command2);
-                } else {
-                    console.error("Socket not open for command:", command2);
-                }
             }
 
             function showTheEndScreen() {

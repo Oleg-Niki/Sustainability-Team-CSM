@@ -15,12 +15,12 @@
 #define LED_GREEN_C2  28  // Board C pair 2 green LED
 
 // Board D LED definitions:
-#define LED_RED_D1    31  // Board D pair 1 red LED
-#define LED_GREEN_D1  30  // Board D pair 1 green LED
-#define LED_RED_D2    33  // Board D pair 2 red LED
-#define LED_GREEN_D2  32  // Board D pair 2 green LED
-#define LED_RED_D3    35  // Board D pair 3 red LED
-#define LED_GREEN_D3  34  // Board D pair 3 green LED
+#define LED_RED_D2    31  // Board D pair 1 red LED
+#define LED_GREEN_D2  30  // Board D pair 1 green LED
+#define LED_RED_D3    33  // Board D pair 2 red LED
+#define LED_GREEN_D3  32  // Board D pair 2 green LED
+#define LED_RED_D1    35  // Board D pair 3 red LED
+#define LED_GREEN_D1  34  // Board D pair 3 green LED
 
 // Board E LED definitions:
 #define LED_RED_E1    37  // Board E pair 1 red LED
