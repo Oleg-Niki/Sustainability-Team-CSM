@@ -683,355 +683,346 @@
                 }
             };
 
+            // ------------------------------
+            // Board Command Configuration for Sequential Command Sending
+            // ------------------------------
+            const boardCommands = ["A1", "A2", "C1", "C2", "D1", "D2", "D3", "E1", "E2", "F1"];
+            let boardIndex = 0;
 
-
-            // Change the cards container based on the color.
-            // Here, if color is GREEN, simulate adding a card; if RED, simulate removing a card.
-            if (color === "GREEN") {
-                addCardButton.click();
-            } else if (color === "RED") {
-                removeCardButton.click();
-            } else {
-                console.error("Unexpected color in command:", color);
+            /**
+             * sendCommand(color)
+             *
+             * Constructs a command string using the current board identifier from boardCommands
+             * and the provided color ("green" or "red"). The command is prefixed with the expected
+             * "FROM NANO X:" string, where X is the board letter (derived from the board identifier).
+             * The command is then sent via WebSocket to the Node.js server.
+             *
+             * @param {string} color - The LED color command ("green" or "red").
+             */
+            function sendCommand(color) {
+                // Get the current board command (e.g., "A1")
+                const boardCmd = boardCommands[boardIndex];
+                // Derive the board letter (first character)
+                const boardLetter = boardCmd.charAt(0);
+                // Construct the full command string
+                const command = "FROM NANO " + boardLetter + ": " + boardCmd + "_" + color.toUpperCase();
+                socket.send(command);
+                console.log("Sent command:", command);
+                boardIndex = (boardIndex + 1) % boardCommands.length;
             }
-        };
+            // ------------------------------
+            // Sound managment: playSound(newSound)
+            // ------------------------------
 
-        // ------------------------------
-        // Board Command Configuration for Sequential Command Sending
-        // ------------------------------
-        const boardCommands = ["A1", "A2", "C1", "C2", "D1", "D2", "D3", "E1", "E2", "F1"];
-        let boardIndex = 0;
-
-        /**
-         * sendCommand(color)
-         *
-         * Constructs a command string using the current board identifier from boardCommands
-         * and the provided color ("green" or "red"). The command is prefixed with the expected
-         * "FROM NANO X:" string, where X is the board letter (derived from the board identifier).
-         * The command is then sent via WebSocket to the Node.js server.
-         *
-         * @param {string} color - The LED color command ("green" or "red").
-         */
-        function sendCommand(color) {
-            // Get the current board command (e.g., "A1")
-            const boardCmd = boardCommands[boardIndex];
-            // Derive the board letter (first character)
-            const boardLetter = boardCmd.charAt(0);
-            // Construct the full command string
-            const command = "FROM NANO " + boardLetter + ": " + boardCmd + "_" + color.toUpperCase();
-            socket.send(command);
-            console.log("Sent command:", command);
-            boardIndex = (boardIndex + 1) % boardCommands.length;
-        }
-        // ------------------------------
-        // Sound managment: playSound(newSound)
-        // ------------------------------
-
-        function playSound(newSound) {
-            // Pause and reset the current sound if it's playing
-            if (currentSound && !currentSound.paused) {
-                currentSound.pause();
-                currentSound.currentTime = 0;
-            }
-            // Set and play the new sound, and catch any errors if the play is interrupted
-            currentSound = newSound;
-            const playPromise = newSound.play();
-            if (playPromise !== undefined) {
-                playPromise.catch(error => {
-                    // Optionally log the error or simply ignore it
-                    console.error("Audio play error:", error);
-                });
-            }
-        }
-
-
-
-        // ------------------------------
-        // UI Update Functions
-        // ------------------------------
-        function createCards(container, greenCount, total) {
-            total = total || 10;
-            container.innerHTML = '';
-            for (let i = 0; i < total; i++) {
-                const card = document.createElement('div');
-                card.classList.add('card');
-                if (i < greenCount) card.classList.add('green');
-                container.appendChild(card);
-            }
-        }
-
-        function updateUI() {
-            // Scenario 1: Show up to 5 cards (California)
-            let caGreen = cardCount <= 5 ? cardCount : 5;
-            createCards(cardsCA, caGreen);
-            if (scenario1Page.style.display !== 'none') {
-                if (cardCount === 3) {
-                    messageCA.textContent = "California state has reached 30% clean energy by 1985!";
-                    playSound(scenarioCASound_30);
-                    animateElement(messageCA, 'button-click', 300);
-                } else if (cardCount === 5) {
-                    messageCA.textContent = "That’s right! California currently uses about 56% of clean electricity!";
-                    playSound(winSound);
-                    // Show animation
-                    // Show both the Sun Burst and Extra Animation concurrently
-                    const sunburstEl = document.getElementById('sunburst');
-                    const extraAnimationEl = document.getElementById('extra-animation');
-                    sunburstEl.style.display = 'block';
-                    extraAnimationEl.style.display = 'block';
-
-                    // Hide the animation after 3 seconds (adjust as needed)
-                    setTimeout(() => {
-                        sunburstEl.style.display = 'none';
-                        extraAnimationEl.style.display = 'none';
-                        playSound(scenarioCASound_win);
-                    }, 2800);
-                    setTimeout(showModal, 500);
-                } else {
-                    messageCA.textContent = "";
+            function playSound(newSound) {
+                // Pause and reset the current sound if it's playing
+                if (currentSound && !currentSound.paused) {
+                    currentSound.pause();
+                    currentSound.currentTime = 0;
+                }
+                // Set and play the new sound, and catch any errors if the play is interrupted
+                currentSound = newSound;
+                const playPromise = newSound.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(error => {
+                        // Optionally log the error or simply ignore it
+                        console.error("Audio play error:", error);
+                    });
                 }
             }
-            // Scenario 2: Show full progress (San Mateo County)
-            let smGreen = cardCount >= 5 ? cardCount : 5;
-            createCards(cardsSM, smGreen);
-            if (cardCount === 7) {
-                messageSM.textContent = "You’re getting close! San Mateo reached 75% clean electricity in 2016";
-                playSound(scenarioSMCSound_70);
-                animateElement(messageSM, 'button-click', 300);
-            } else if (cardCount === 10) {
-                messageSM.textContent = "You got it! San Mateo serves 100% clean electricity – leading the nation!";
-                playSound(scenarioSMCSound_win);
-                animateElement(messageSM, 'button-click', 300);
-                setTimeout(showFinalModal, 1000);
-            } else {
+
+
+
+            // ------------------------------
+            // UI Update Functions
+            // ------------------------------
+            function createCards(container, greenCount, total) {
+                total = total || 10;
+                container.innerHTML = '';
+                for (let i = 0; i < total; i++) {
+                    const card = document.createElement('div');
+                    card.classList.add('card');
+                    if (i < greenCount) card.classList.add('green');
+                    container.appendChild(card);
+                }
+            }
+
+            function updateUI() {
+                // Scenario 1: Show up to 5 cards (California)
+                let caGreen = cardCount <= 5 ? cardCount : 5;
+                createCards(cardsCA, caGreen);
+                if (scenario1Page.style.display !== 'none') {
+                    if (cardCount === 3) {
+                        messageCA.textContent = "California state has reached 30% clean energy by 1985!";
+                        playSound(scenarioCASound_30);
+                        animateElement(messageCA, 'button-click', 300);
+                    } else if (cardCount === 5) {
+                        messageCA.textContent = "That’s right! California currently uses about 56% of clean electricity!";
+                        playSound(winSound);
+                        // Show animation
+                        // Show both the Sun Burst and Extra Animation concurrently
+                        const sunburstEl = document.getElementById('sunburst');
+                        const extraAnimationEl = document.getElementById('extra-animation');
+                        sunburstEl.style.display = 'block';
+                        extraAnimationEl.style.display = 'block';
+
+                        // Hide the animation after 3 seconds (adjust as needed)
+                        setTimeout(() => {
+                            sunburstEl.style.display = 'none';
+                            extraAnimationEl.style.display = 'none';
+                            playSound(scenarioCASound_win);
+                        }, 2800);
+                        setTimeout(showModal, 500);
+                    } else {
+                        messageCA.textContent = "";
+                    }
+                }
+                // Scenario 2: Show full progress (San Mateo County)
+                let smGreen = cardCount >= 5 ? cardCount : 5;
+                createCards(cardsSM, smGreen);
+                if (cardCount === 7) {
+                    messageSM.textContent = "You’re getting close! San Mateo reached 75% clean electricity in 2016";
+                    playSound(scenarioSMCSound_70);
+                    animateElement(messageSM, 'button-click', 300);
+                } else if (cardCount === 10) {
+                    messageSM.textContent = "You got it! San Mateo serves 100% clean electricity – leading the nation!";
+                    playSound(scenarioSMCSound_win);
+                    animateElement(messageSM, 'button-click', 300);
+                    setTimeout(showFinalModal, 1000);
+                } else {
+                    messageSM.textContent = "";
+                }
+            }
+
+            // ------------------------------
+            // Reset Function: Resets UI and Variables to Start State
+            // ------------------------------
+            function resetExhibit() {
+                cardCount = 0;
+                currentInstruction = 1;
+                boardIndex = 0; // Reset board order sequence
+                instructionContainer.style.display = 'none';
+                mainScreen.style.display = 'none';
+                scenario1Page.style.display = 'none';
+                scenario2Page.style.display = 'none';
+                modal.style.display = 'none';
+                finalModal.style.display = 'none';
+                header.style.display = 'none';
+                messageCA.textContent = "";
                 messageSM.textContent = "";
-            }
-        }
-
-        // ------------------------------
-        // Reset Function: Resets UI and Variables to Start State
-        // ------------------------------
-        function resetExhibit() {
-            cardCount = 0;
-            currentInstruction = 1;
-            boardIndex = 0; // Reset board order sequence
-            instructionContainer.style.display = 'none';
-            mainScreen.style.display = 'none';
-            scenario1Page.style.display = 'none';
-            scenario2Page.style.display = 'none';
-            modal.style.display = 'none';
-            finalModal.style.display = 'none';
-            header.style.display = 'none';
-            messageCA.textContent = "";
-            messageSM.textContent = "";
-            createCards(cardsCA, 0);
-            createCards(cardsSM, 0);
-            startScreen.style.display = 'flex';
-        }
-
-        // ------------------------------
-        // Instruction Navigation Functions
-        // ------------------------------
-        function showInstructionScreen(index) {
-            // Clear any pending instruction sound timer
-            if (instructionSoundTimer) {
-                clearTimeout(instructionSoundTimer);
-                instructionSoundTimer = null;
+                createCards(cardsCA, 0);
+                createCards(cardsSM, 0);
+                startScreen.style.display = 'flex';
             }
 
-            currentInstruction = index;
-            for (let i = 0; i < instructionScreens.length; i++) {
-                instructionScreens[i].style.display = 'none';
-            }
-            document.getElementById('instruction-screen-' + index).style.display = 'flex';
-            instructionBack.style.display = (index === 1) ? 'none' : 'inline-block';
-            instructionNext.textContent = (index === totalInstructions) ? 'Continue' : 'Next';
-
-            // Play the corresponding instruction sound based on the screen index
-            switch (index) {
-                case 1:
-                    instructionSoundTimer = setTimeout(() => {
-                        playSound(instruction1Sound);
-                    }, 5200);
-                    break;
-                case 2:
-                    playSound(instruction2Sound);
-                    break;
-                case 3:
-                    playSound(instruction3Sound);
-                    break;
-                default:
-                    break;
-            }
-        }
-        instructionBack.addEventListener('click', () => {
-            animateButton(instructionBack);
-            if (currentInstruction > 1) {
-                showInstructionScreen(currentInstruction - 1);
-            }
-        }); instructionNext.addEventListener('click', () => {
-            animateButton(instructionNext);
-            if (currentInstruction < totalInstructions) {
-                showInstructionScreen(currentInstruction + 1);
-            } else {
-                // Clear any pending instruction sound timer before moving on
+            // ------------------------------
+            // Instruction Navigation Functions
+            // ------------------------------
+            function showInstructionScreen(index) {
+                // Clear any pending instruction sound timer
                 if (instructionSoundTimer) {
                     clearTimeout(instructionSoundTimer);
                     instructionSoundTimer = null;
                 }
-                instructionContainer.style.display = 'none';
-                mainScreen.style.display = 'block';
-                showScenario1();
-                updateUI();
+
+                currentInstruction = index;
+                for (let i = 0; i < instructionScreens.length; i++) {
+                    instructionScreens[i].style.display = 'none';
+                }
+                document.getElementById('instruction-screen-' + index).style.display = 'flex';
+                instructionBack.style.display = (index === 1) ? 'none' : 'inline-block';
+                instructionNext.textContent = (index === totalInstructions) ? 'Continue' : 'Next';
+
+                // Play the corresponding instruction sound based on the screen index
+                switch (index) {
+                    case 1:
+                        instructionSoundTimer = setTimeout(() => {
+                            playSound(instruction1Sound);
+                        }, 5200);
+                        break;
+                    case 2:
+                        playSound(instruction2Sound);
+                        break;
+                    case 3:
+                        playSound(instruction3Sound);
+                        break;
+                    default:
+                        break;
+                }
             }
-        });
+            instructionBack.addEventListener('click', () => {
+                animateButton(instructionBack);
+                if (currentInstruction > 1) {
+                    showInstructionScreen(currentInstruction - 1);
+                }
+            });
+            instructionNext.addEventListener('click', () => {
+                animateButton(instructionNext);
+                if (currentInstruction < totalInstructions) {
+                    showInstructionScreen(currentInstruction + 1);
+                } else {
+                    // Clear any pending instruction sound timer before moving on
+                    if (instructionSoundTimer) {
+                        clearTimeout(instructionSoundTimer);
+                        instructionSoundTimer = null;
+                    }
+                    instructionContainer.style.display = 'none';
+                    mainScreen.style.display = 'block';
+                    showScenario1();
+                    updateUI();
+                }
+            });
 
-        // ------------------------------
-        // Scenario Navigation Functions
-        // ------------------------------
-        function showScenario1() {
-            scenario1Page.style.display = 'flex';
-            scenario2Page.style.display = 'none';
-            playSound(scenarioCASound_Start);
-        }
-
-        function showScenario2() {
-            scenario1Page.style.display = 'none';
-            scenario2Page.style.display = 'flex';
-        }
-
-        // ------------------------------
-        // Event Handlers
-        // ------------------------------
-        startButton.addEventListener('click', () => {
-            animateButton(startButton);
-            playSound(clickSound);
-            playSound(welcomeSound);
-            startScreen.style.display = 'none';
-            header.style.display = 'block';
-            instructionContainer.style.display = 'flex';
-            showInstructionScreen(1);
-        }); scenario1Next.addEventListener('click', () => {
-            animateButton(scenario1Next);
-            playSound(clickSound);
-            showScenario2();
-        }); scenario2Back.addEventListener('click', () => {
-            animateButton(scenario2Back);
-            playSound(clickSound);
-            showScenario1();
-        });
-
-        addCardButton.addEventListener('click', () => {
-            animateButton(addCardButton);
-            playSound(clickSound);
-            if (cardCount < 10) {
-                cardCount++;
-                updateUI();
-                // Send command via WebSocket for green card
-                sendCommand("green");
+            // ------------------------------
+            // Scenario Navigation Functions
+            // ------------------------------
+            function showScenario1() {
+                scenario1Page.style.display = 'flex';
+                scenario2Page.style.display = 'none';
+                playSound(scenarioCASound_Start);
             }
-        });
-        const scenario1Back = document.getElementById('scenario1-back');
 
-        scenario1Back.addEventListener('click', () => {
-            animateButton(scenario1Back);
-            playSound(clickSound);
-            // Hide Scenario 1 and main interactive screen
-            scenario1Page.style.display = 'none';
-            mainScreen.style.display = 'none';
-            // Show instruction container and jump to Instruction #3
-            instructionContainer.style.display = 'flex';
-            showInstructionScreen(totalInstructions);
-        });
-
-
-        removeCardButton.addEventListener('click', () => {
-            animateButton(removeCardButton);
-            playSound(clickSound);
-            if (cardCount > 0) {
-                cardCount--;
-                updateUI();
-                // Send command via WebSocket for red card
-                sendCommand("red");
+            function showScenario2() {
+                scenario1Page.style.display = 'none';
+                scenario2Page.style.display = 'flex';
             }
-        }); restartButton.addEventListener('click', () => {
-            animateButton(restartButton);
 
-            // Reset the client-side UI
-            resetExhibit();
-
-            // Send the reset command to the Arduino via WebSocket:
-            if (socket.readyState === WebSocket.OPEN) {
-                socket.send("RESET_LEDS\n");
-                console.log("Sent reset command to Arduino");
-            } else {
-                console.error("WebSocket is not open. Can't send reset command.");
-            }
-        });
-
-        // ------------------------------
-        // Modal and Final Modal Handling
-        // ------------------------------
-        function showModal() {
-            modal.style.display = 'block';
-        }
-
-        function hideModal() {
-            modal.style.display = 'none';
-        }
-        modalClose.addEventListener('click', () => {
-            hideModal();
-            // Automatic transition: if in Scenario 1, switch to Scenario 2 and play start sound.
-            if (scenario1Page.style.display !== 'none') {
+            // ------------------------------
+            // Event Handlers
+            // ------------------------------
+            startButton.addEventListener('click', () => {
+                animateButton(startButton);
+                playSound(clickSound);
+                playSound(welcomeSound);
+                startScreen.style.display = 'none';
+                header.style.display = 'block';
+                instructionContainer.style.display = 'flex';
+                showInstructionScreen(1);
+            });
+            scenario1Next.addEventListener('click', () => {
+                animateButton(scenario1Next);
+                playSound(clickSound);
                 showScenario2();
-                playSound(scenarioSMCSound_Start);
+            });
+            scenario2Back.addEventListener('click', () => {
+                animateButton(scenario2Back);
+                playSound(clickSound);
+                showScenario1();
+            });
+
+            addCardButton.addEventListener('click', () => {
+                animateButton(addCardButton);
+                playSound(clickSound);
+                if (cardCount < 10) {
+                    cardCount++;
+                    updateUI();
+                    // Send command via WebSocket for green card
+                    sendCommand("green");
+                }
+            });
+            const scenario1Back = document.getElementById('scenario1-back');
+
+            scenario1Back.addEventListener('click', () => {
+                animateButton(scenario1Back);
+                playSound(clickSound);
+                // Hide Scenario 1 and main interactive screen
+                scenario1Page.style.display = 'none';
+                mainScreen.style.display = 'none';
+                // Show instruction container and jump to Instruction #3
+                instructionContainer.style.display = 'flex';
+                showInstructionScreen(totalInstructions);
+            });
+
+
+            removeCardButton.addEventListener('click', () => {
+                animateButton(removeCardButton);
+                playSound(clickSound);
+                if (cardCount > 0) {
+                    cardCount--;
+                    updateUI();
+                    // Send command via WebSocket for red card
+                    sendCommand("red");
+                }
+            });
+            restartButton.addEventListener('click', () => {
+                animateButton(restartButton);
+
+                // Reset the client-side UI
+                resetExhibit();
+
+                // Send the reset command to the Arduino via WebSocket:
+                if (socket.readyState === WebSocket.OPEN) {
+                    socket.send("RESET_LEDS\n");
+                    console.log("Sent reset command to Arduino");
+                } else {
+                    console.error("WebSocket is not open. Can't send reset command.");
+                }
+            });
+
+            // ------------------------------
+            // Modal and Final Modal Handling
+            // ------------------------------
+            function showModal() {
+                modal.style.display = 'block';
             }
-        });
 
-        function showFinalModal() {
-            finalModal.style.display = 'block';
-        }
+            function hideModal() {
+                modal.style.display = 'none';
+            }
+            modalClose.addEventListener('click', () => {
+                hideModal();
+                // Automatic transition: if in Scenario 1, switch to Scenario 2 and play start sound.
+                if (scenario1Page.style.display !== 'none') {
+                    showScenario2();
+                    playSound(scenarioSMCSound_Start);
+                }
+            });
 
-        function hideFinalModal() {
-            finalModal.style.display = 'none';
-        }
+            function showFinalModal() {
+                finalModal.style.display = 'block';
+            }
 
-        // ------------------------------
-        // sendCommand(color)
-        // ------------------------------
-        /**
-         * Constructs a command string using the current board command from the boardCommands array
-         * and the provided color ("green" or "red"). The command is prefixed with the expected
-         * "FROM NANO X:" string (where X is the board letter derived from the board identifier)
-         * and then sent via the WebSocket to the Node.js server, which forwards it to the Arduino.
-         *
-         * For example, if boardCommands[boardIndex] is "A1" and color is "green",
-         * the function sends: "FROM NANO A: A1_GREEN".
-         *
-         * @param {string} color - The LED color command ("green" or "red").
-         */
-        function sendCommand(color) {
-            const boardCmd = boardCommands[boardIndex];
-            const boardLetter = boardCmd.charAt(0);
-            const command = boardCmd + "_" + color.toUpperCase();
-            // Append a newline before sending
-            socket.send(command + "\n");
-            console.log("Sent command:", command);
-            boardIndex = (boardIndex + 1) % boardCommands.length;
-        }
+            function hideFinalModal() {
+                finalModal.style.display = 'none';
+            }
 
-        function showTheEndScreen() {
-            mainScreen.style.display = 'none';
-            scenario2Page.style.display = 'none';
-            modal.style.display = 'none';
-            finalModal.style.display = 'none';
-            theEndScreen.style.display = 'block';
-        }
+            // ------------------------------
+            // sendCommand(color)
+            // ------------------------------
+            /**
+             * Constructs a command string using the current board command from the boardCommands array
+             * and the provided color ("green" or "red"). The command is prefixed with the expected
+             * "FROM NANO X:" string (where X is the board letter derived from the board identifier)
+             * and then sent via the WebSocket to the Node.js server, which forwards it to the Arduino.
+             *
+             * For example, if boardCommands[boardIndex] is "A1" and color is "green",
+             * the function sends: "FROM NANO A: A1_GREEN".
+             *
+             * @param {string} color - The LED color command ("green" or "red").
+             */
+            function sendCommand(color) {
+                const boardCmd = boardCommands[boardIndex];
+                const boardLetter = boardCmd.charAt(0);
+                const command = boardCmd + "_" + color.toUpperCase();
+                // Append a newline before sending
+                socket.send(command + "\n");
+                console.log("Sent command:", command);
+                boardIndex = (boardIndex + 1) % boardCommands.length;
+            }
+
+            function showTheEndScreen() {
+                mainScreen.style.display = 'none';
+                scenario2Page.style.display = 'none';
+                modal.style.display = 'none';
+                finalModal.style.display = 'none';
+                theEndScreen.style.display = 'block';
+            }
 
 
-        theEndButton.addEventListener('click', () => {
-            hideFinalModal();
-            showTheEndScreen();
-        });
+            theEndButton.addEventListener('click', () => {
+                hideFinalModal();
+                showTheEndScreen();
+            });
         });
     </script>
 </body>
