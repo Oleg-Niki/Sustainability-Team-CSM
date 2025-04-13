@@ -930,8 +930,20 @@
                     sendCommand("red");
                 }
             });
-            restartButton.addEventListener('click', resetExhibit);
-            resetExhibit();
+            restartButton.addEventListener('click', () => {
+                animateButton(restartButton);
+
+                // Reset the client-side UI
+                resetExhibit();
+
+                // Send the reset command to the Arduino via WebSocket:
+                if (socket.readyState === WebSocket.OPEN) {
+                    socket.send("RESET_LEDS\n");
+                    console.log("Sent reset command to Arduino");
+                } else {
+                    console.error("WebSocket is not open. Can't send reset command.");
+                }
+            });
 
             // ------------------------------
             // Modal and Final Modal Handling

@@ -125,95 +125,101 @@ void loop() {
 // Description: Processes incoming command strings to control the LED states.
 // *********************
 void handleLEDCommand(String command) {
+// Check for reset command from the website
+if (command == "RESET_LEDS") {
+  resetLEDs();
+  Serial.println("LEDs reset");
+  return; // Exit the function after resetting the LEDs
+}
   // --- Board A Commands ---
 if (command == "A1_RED") { 
   digitalWrite(LED_RED_A1, LOW);
   digitalWrite(LED_GREEN_A1, HIGH);
-  Serial.println("RED");
+  //Serial.println("RED");
 } else if (command == "A1_GREEN") {
   digitalWrite(LED_RED_A1, HIGH);
   digitalWrite(LED_GREEN_A1, LOW);
-  Serial.println("GREEN");
+  //Serial.println("GREEN");
 } else if (command == "A2_RED") {
   digitalWrite(LED_RED_A2, LOW);
   digitalWrite(LED_GREEN_A2, HIGH);
-  Serial.println("RED");
+  //Serial.println("RED");
 } else if (command == "A2_GREEN") {
   digitalWrite(LED_RED_A2, HIGH);
   digitalWrite(LED_GREEN_A2, LOW);
-  Serial.println("GREEN");
+  //Serial.println("GREEN");
 }
 // --- Board C Commands ---
 else if (command == "C1_RED") { 
   digitalWrite(LED_RED_C1, LOW);
   digitalWrite(LED_GREEN_C1, HIGH);
-  Serial.println("RED");
+  //Serial.println("RED");
 } else if (command == "C1_GREEN") {
   digitalWrite(LED_RED_C1, HIGH);
   digitalWrite(LED_GREEN_C1, LOW);
-  Serial.println("GREEN");
+  //Serial.println("GREEN");
 } else if (command == "C2_RED") {
   digitalWrite(LED_RED_C2, LOW);
   digitalWrite(LED_GREEN_C2, HIGH);
-  Serial.println("RED");
+  //Serial.println("RED");
 } else if (command == "C2_GREEN") {
   digitalWrite(LED_RED_C2, HIGH);
   digitalWrite(LED_GREEN_C2, LOW);
-  Serial.println("GREEN");
+  //Serial.println("GREEN");
 }
 // --- Board D Commands ---
 else if (command == "D1_RED") {
   digitalWrite(LED_RED_D1, LOW);
   digitalWrite(LED_GREEN_D1, HIGH);
-  Serial.println("RED");
+  //Serial.println("RED");
 } else if (command == "D1_GREEN") {
   digitalWrite(LED_RED_D1, HIGH);
   digitalWrite(LED_GREEN_D1, LOW);
-  Serial.println("GREEN");
+  //Serial.println("GREEN");
 } else if (command == "D2_RED") {
   digitalWrite(LED_RED_D2, LOW);
   digitalWrite(LED_GREEN_D2, HIGH);
-  Serial.println("RED");
+  //Serial.println("RED");
 } else if (command == "D2_GREEN") {
   digitalWrite(LED_RED_D2, HIGH);
   digitalWrite(LED_GREEN_D2, LOW);
-  Serial.println("GREEN");
+  //Serial.println("GREEN");
 } else if (command == "D3_RED") {
   digitalWrite(LED_RED_D3, LOW);
   digitalWrite(LED_GREEN_D3, HIGH);
-  Serial.println("RED");
+  //Serial.println("RED");
 } else if (command == "D3_GREEN") {
   digitalWrite(LED_RED_D3, HIGH);
   digitalWrite(LED_GREEN_D3, LOW);
-  Serial.println("GREEN");
+  //Serial.println("GREEN");
 }
 // --- Board E Commands ---
 else if (command == "E1_RED") {
   digitalWrite(LED_RED_E1, LOW);
   digitalWrite(LED_GREEN_E1, HIGH);
-  Serial.println("RED");
+  //Serial.println("RED");
 } else if (command == "E1_GREEN") {
   digitalWrite(LED_RED_E1, HIGH);
   digitalWrite(LED_GREEN_E1, LOW);
-  Serial.println("GREEN");
+  //Serial.println("GREEN");
 } else if (command == "E2_RED") {
   digitalWrite(LED_RED_E2, LOW);
   digitalWrite(LED_GREEN_E2, HIGH);
-  Serial.println("RED");
+  //Serial.println("RED");
 } else if (command == "E2_GREEN") {
   digitalWrite(LED_RED_E2, HIGH);
   digitalWrite(LED_GREEN_E2, LOW);
-  Serial.println("GREEN");
+  //Serial.println("GREEN");
 }
 // --- Board F Commands ---
 else if (command == "F1_RED") {
   digitalWrite(LED_RED_F1, LOW);
   digitalWrite(LED_GREEN_F1, HIGH);
-  Serial.println("RED");
+  //Serial.println("RED");
 } else if (command == "F1_GREEN") {
   digitalWrite(LED_RED_F1, HIGH);
   digitalWrite(LED_GREEN_F1, LOW);
-  Serial.println("GREEN");
+  //Serial.println("GREEN");
 }
 
 }
