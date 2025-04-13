@@ -654,16 +654,24 @@
                 console.log("Connected to SIM Mateo WebSocket server");
             };
             socket.onmessage = (event) => {
-                const message = event.data.trim();
+                console.log("Received from Arduino:", event.data);
+                let message = event.data.trim();
 
-                // Optional: ignore messages that appear to be from your live-reload/development tool.
-                if (message.toLowerCase().startsWith("index")) {
-                    // Log a debug message or simply return without processing.
-                    console.warn("Ignoring live reload message:", message);
+                // If the message starts with "FROM NANO", remove the prefix
+                if (message.startsWith("FROM NANO")) {
+                    // Find the colon index and remove everything up to and including it
+                    const colonIndex = message.indexOf(":");
+                    if (colonIndex !== -1) {
+                        message = message.substring(colonIndex + 1).trim();
+                    }
+                }
+
+                // Optional: Ignore any extra messages that contain "index"
+                if (message.toLowerCase().includes("index")) {
                     return;
                 }
 
-                // Define the expected command format using a regular expression.
+                // Expected format after stripping: "C1_GREEN", "C2_RED", etc.
                 const validCmdRegex = /^(A1|A2|C1|C2|D1|D2|D3|E1|E2|F1)_(RED|GREEN)$/i;
                 if (!validCmdRegex.test(message)) {
                     console.warn("Ignoring non-command message:", message);
@@ -672,18 +680,21 @@
 
                 // Split the message into its components.
                 const parts = message.split('_');
-                const board = parts[0]; // e.g., "A1"
-                const color = parts[1].toUpperCase(); // "RED" or "GREEN"
+                const board = parts[0]; // E.g., "C1"
+                const color = parts[1].toUpperCase(); // "GREEN" or "RED"
 
                 console.log(`Parsed command: Board: ${board}, Color: ${color}`);
 
-                // Trigger the appropriate UI change.
+                // Trigger UI changes by simulating clicks on the appropriate button.
                 if (color === "GREEN") {
                     addCardButton.click();
                 } else if (color === "RED") {
                     removeCardButton.click();
+                } else {
+                    console.error("Unexpected color in command:", color);
                 }
             };
+
 
 
             // ------------------------------
