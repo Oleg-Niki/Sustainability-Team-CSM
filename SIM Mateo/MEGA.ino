@@ -130,11 +130,11 @@ void loop() {
 // *********************
 void handleLEDCommand(String command) {
 // Check for reset command from the website
-if (command == "RESET_LEDS") {
-  resetLEDs();
-  Serial.println("LEDs reset");
-  return; // Exit the function after resetting the LEDs
-}
+// if (command == "RESET_LEDS") {
+//   resetLEDs();
+//   Serial.println("LEDs reset");
+//   return; // Exit the function after resetting the LEDs
+// }
   // --- Board A Commands ---
 if (command == "A1_RED") { 
   digitalWrite(LED_RED_A1, LOW);

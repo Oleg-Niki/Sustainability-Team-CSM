@@ -11,7 +11,7 @@ const port = 80;
 app.use(express.static('.'));
 
 // Replace with your Arduino port name (e.g., "COM11")
-const portName = "COM12";
+const portName = "COM9";
 const serialPort = new SerialPort({
     path: portName,
     baudRate: 9600,
