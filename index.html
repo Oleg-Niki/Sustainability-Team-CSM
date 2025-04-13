@@ -655,18 +655,33 @@
             };
             socket.onmessage = (event) => {
                 console.log("Received from Arduino:", event.data);
-                const command = event.data.trim().toLowerCase();
-                if (command === "red") {
-                    removeCardButton.click();
-                } else if (command === "green") {
-                    addCardButton.click();
+
+                // Remove any extra whitespace/newlines.
+                const message = event.data.trim();
+
+                // Expected message format: "A1_GREEN", "A2_RED", "C1_GREEN", etc.
+                const parts = message.split('_');
+
+                // Check that the message is in the correct format.
+                if (parts.length !== 2) {
+                    console.error("Invalid command format received:", message);
+                    return;
                 }
-            };
-            socket.onerror = (error) => {
-                console.error("WebSocket error:", error);
-            };
-            socket.onclose = () => {
-                console.log("WebSocket connection closed");
+
+                const board = parts[0]; // For example "A1", "D3", etc.
+                const color = parts[1].toUpperCase(); // Expected values: "GREEN" or "RED"
+
+                console.log(`Parsed command: Board: ${board}, Color: ${color}`);
+
+                // Change the cards container based on the color.
+                // Here, if color is GREEN, simulate adding a card; if RED, simulate removing a card.
+                if (color === "GREEN") {
+                    addCardButton.click();
+                } else if (color === "RED") {
+                    removeCardButton.click();
+                } else {
+                    console.error("Unexpected color in command:", color);
+                }
             };
 
             // ------------------------------
