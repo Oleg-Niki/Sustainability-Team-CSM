@@ -654,25 +654,28 @@
                 console.log("Connected to SIM Mateo WebSocket server");
             };
             socket.onmessage = (event) => {
-                console.log("Received from Arduino:", event.data);
                 let message = event.data.trim();
 
-                // If the message starts with "FROM NANO", remove the prefix
+                // Immediately ignore messages that start with "index" (case-insensitive)
+                if (/^index\s*\(/i.test(message)) {
+                    // Optionally, log a debug message or simply ignore silently.
+                    console.debug("Ignoring index message:", message);
+                    return;
+                }
+
+                // If the message starts with "FROM NANO", strip the prefix.
                 if (message.startsWith("FROM NANO")) {
-                    // Find the colon index and remove everything up to and including it
+                    // Find the colon index and remove everything before and including it.
                     const colonIndex = message.indexOf(":");
                     if (colonIndex !== -1) {
                         message = message.substring(colonIndex + 1).trim();
                     }
                 }
 
-                // Optional: Ignore any extra messages that contain "index"
-                if (message.toLowerCase().includes("index")) {
-                    return;
-                }
-
-                // Expected format after stripping: "C1_GREEN", "C2_RED", etc.
+                // Define the expected command format using a regular expression.
+                // Expected format: one of A1, A2, C1, C2, D1, D2, D3, E1, E2, F1 followed by an underscore and then "RED" or "GREEN".
                 const validCmdRegex = /^(A1|A2|C1|C2|D1|D2|D3|E1|E2|F1)_(RED|GREEN)$/i;
+
                 if (!validCmdRegex.test(message)) {
                     console.warn("Ignoring non-command message:", message);
                     return;
@@ -680,12 +683,12 @@
 
                 // Split the message into its components.
                 const parts = message.split('_');
-                const board = parts[0]; // E.g., "C1"
-                const color = parts[1].toUpperCase(); // "GREEN" or "RED"
+                const board = parts[0]; // e.g., "C1"
+                const color = parts[1].toUpperCase(); // "RED" or "GREEN"
 
                 console.log(`Parsed command: Board: ${board}, Color: ${color}`);
 
-                // Trigger UI changes by simulating clicks on the appropriate button.
+                // Trigger UI actions based on the received color.
                 if (color === "GREEN") {
                     addCardButton.click();
                 } else if (color === "RED") {
@@ -694,8 +697,6 @@
                     console.error("Unexpected color in command:", color);
                 }
             };
-
-
 
             // ------------------------------
             // Board Command Configuration for Sequential Command Sending
