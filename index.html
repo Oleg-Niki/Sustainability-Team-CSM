@@ -660,20 +660,20 @@
                 // Expected format: "A1_GREEN", "A2_RED", etc.
                 const validCmdRegex = /^(A1|A2|C1|C2|D1|D2|D3|E1|E2|F1)_(RED|GREEN)$/i;
 
-                // If the message doesn't match the expected format, just ignore it.
+                // If the message doesn't match the expected format, log a warning and ignore it.
                 if (!validCmdRegex.test(message)) {
                     console.warn("Ignoring non-command message:", message);
                     return;
                 }
 
-                // Split the message into its components.
+                // Split the message into board and color parts.
                 const parts = message.split('_');
                 const board = parts[0]; // e.g., "A1"
-                const color = parts[1].toUpperCase(); // "GREEN" or "RED"
+                const color = parts[1].toUpperCase(); // "RED" or "GREEN"
 
                 console.log(`Parsed command: Board: ${board}, Color: ${color}`);
 
-                // Trigger the appropriate UI changes based on the color.
+                // Simulate switching the cards container based on the color.
                 if (color === "GREEN") {
                     addCardButton.click();
                 } else if (color === "RED") {
@@ -682,6 +682,7 @@
                     console.error("Unexpected color in command:", color);
                 }
             };
+
 
 
             // Change the cards container based on the color.
