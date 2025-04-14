@@ -68,9 +68,25 @@ const wss = new WebSocketServer({ server });
 
 wss.on("connection", (ws) => {
     console.log("WebSocket client connected");
-    ws.on("message", (message) => {
+    ws.on("message", (msg) => {
+        // Convert the message to a string if it isn't already.
+        let message = (typeof msg === "string") ? msg : msg.toString('utf8');
         console.log(`Message from client: ${message}`);
+
+        // Ensure it ends with a newline. If not, append one.
+        if (!message.endsWith("\n")) {
+            message += "\n";
+        }
+
+        serialPort.write(message, (err) => {
+            if (err) {
+                console.error("Error writing to serial port:", err.message);
+            } else {
+                console.log("Sent to Arduino:", message);
+            }
+        });
     });
+
     ws.send("Connected to SIM Mateo WebSocket server");
     primaryWs = ws;
     // Delay flushing queued commands to ensure the client's onmessage handler is ready
