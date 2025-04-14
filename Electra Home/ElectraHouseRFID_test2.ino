@@ -13,11 +13,12 @@
 #define SS_1_PIN        2          // RFID Reader 0 SS on pin 2
 #define SS_2_PIN        3          // RFID Reader 1 SS on pin 3
 #define SS_3_PIN        4          // RFID Reader 2 SS on pin 4
+#define SS_4_PIN        5          // RFID Reader 3 SS on pin 5
  
-#define NR_OF_READERS   3
+#define NR_OF_READERS   4
  
 // Array of slave select pins for the readers
-byte ssPins[] = {SS_1_PIN, SS_2_PIN, SS_3_PIN};
+byte ssPins[] = {SS_1_PIN, SS_2_PIN, SS_3_PIN, SS_4_PIN};
  
 MFRC522 mfrc522[NR_OF_READERS];   // Create MFRC522 instances
  
