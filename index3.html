@@ -468,8 +468,8 @@
 
     <!-- Main Interactive Screen -->
     <div id="main-screen">
-        <!-- Controls: Add/Remove Cards (visible on both scenario pages) -->
-        <div id="controls">
+        <!-- Controls: (Hidden now so website doesn't send commands) -->
+        <div id="controls" style="display: none;">
             <button id="add-card">Green Card</button>
             <button id="remove-card">Red Card</button>
         </div>
@@ -483,27 +483,51 @@
         <!-- Scenario 1 Page -->
         <div id="scenario1-page">
             <div class="scenario">
-
                 <img src="assets/california.png" alt="Transparent California Overlay" class="transparent-overlay">
-                <div class="cards-container" id="cards-ca"></div>
+                <!-- Card containers with 10 separate card elements -->
+                <div class="cards-container" id="cards-all">
+                    <div class="card" id="card-a1"></div>
+                    <div class="card" id="card-a2"></div>
+                    <div class="card" id="card-c1"></div>
+                    <div class="card" id="card-c2"></div>
+                    <div class="card" id="card-d1"></div>
+                    <div class="card" id="card-d2"></div>
+                    <div class="card" id="card-d3"></div>
+                    <div class="card" id="card-e1"></div>
+                    <div class="card" id="card-e2"></div>
+                    <div class="card" id="card-f1"></div>
+                </div>
                 <div class="message" id="message-ca"></div>
-                <h2 style="text-align: center;"> What percentage of California's electricity is clean? (e.g. solar, hydro, wind, nuclear)</h2>
+                <h2 style="text-align: center;">
+                    What percentage of California's electricity is clean? (e.g. solar, hydro, wind, nuclear)
+                </h2>
             </div>
             <div id="scenario-nav">
                 <button id="scenario1-back">Back</button>
                 <button id="scenario1-next">Next</button>
             </div>
-
-
         </div>
-        <!-- Scenario 2 Page -->
+        <!-- Scenario 2 Page (if needed; you can use a similar structure) -->
         <div id="scenario2-page" style="display: none;">
             <div class="scenario">
-
                 <img src="assets/smc.png" alt="Transparent SMC Overlay" class="transparent-overlay">
-                <div class="cards-container" id="cards-sm"></div>
+                <!-- For Scenario 2, if you wish to have a similar layout -->
+                <div class="cards-container" id="cards-all-sm">
+                    <div class="card" id="card-a1-sm"></div>
+                    <div class="card" id="card-a2-sm"></div>
+                    <div class="card" id="card-c1-sm"></div>
+                    <div class="card" id="card-c2-sm"></div>
+                    <div class="card" id="card-d1-sm"></div>
+                    <div class="card" id="card-d2-sm"></div>
+                    <div class="card" id="card-d3-sm"></div>
+                    <div class="card" id="card-e1-sm"></div>
+                    <div class="card" id="card-e2-sm"></div>
+                    <div class="card" id="card-f1-sm"></div>
+                </div>
                 <div class="message" id="message-sm"></div>
-                <h2 style="text-align: center;">What percentage of San Mateo County's electricity is clean?</h2>
+                <h2 style="text-align: center;">
+                    What percentage of San Mateo County's electricity is clean?
+                </h2>
             </div>
             <div id="scenario-nav">
                 <button id="scenario2-back">Back</button>
@@ -556,11 +580,13 @@
             const header = document.getElementById('header');
             const restartButton = document.getElementById('restart-button');
             const scenario1Page = document.getElementById('scenario1-page');
-            const cardsCA = document.getElementById('cards-ca');
+            // Define the Scenario 1 card container as cardsCA (using the correct id "cards-all")
+            const cardsCA = document.getElementById('cards-all');
+            // Correct the Scenario 2 card container using the id "cards-all-sm"
+            const cardsSM = document.getElementById('cards-all-sm');
             const messageCA = document.getElementById('message-ca');
             const scenario1Next = document.getElementById('scenario1-next');
             const scenario2Page = document.getElementById('scenario2-page');
-            const cardsSM = document.getElementById('cards-sm');
             const messageSM = document.getElementById('message-sm');
             const scenario2Back = document.getElementById('scenario2-back');
             const addCardButton = document.getElementById('add-card');
@@ -568,7 +594,6 @@
             const modal = document.getElementById('modal');
             const modalClose = document.getElementById('modal-close');
             const finalModal = document.getElementById('finalModal');
-            const playAgainButton = document.getElementById('play-again');
             const theEndScreen = document.getElementById('theEndScreen');
             const theEndButton = document.getElementById('theEndButton');
 
@@ -653,20 +678,54 @@
             socket.onopen = () => {
                 console.log("Connected to SIM Mateo WebSocket server");
             };
+            // Update the onmessage handler so that it updates card container colors.
             socket.onmessage = (event) => {
                 console.log("Received from Arduino:", event.data);
-                const command = event.data.trim().toLowerCase();
-                if (command === "red") {
-                    removeCardButton.click();
-                } else if (command === "green") {
-                    addCardButton.click();
+
+                // Get the raw message string and trim whitespace.
+                let rawMsg = event.data.trim();
+                console.log("Raw message:", rawMsg);
+
+                // Check for a prefix (e.g., "FROM NANO") and remove it.
+                if (rawMsg.toLowerCase().includes("from nano")) {
+                    const colonIndex = rawMsg.indexOf(":");
+                    if (colonIndex !== -1) {
+                        rawMsg = rawMsg.substring(colonIndex + 1).trim();
+                    }
                 }
-            };
-            socket.onerror = (error) => {
-                console.error("WebSocket error:", error);
-            };
-            socket.onclose = () => {
-                console.log("WebSocket connection closed");
+                console.log("Processed message after prefix removal:", rawMsg);
+
+                // Convert the message to lower case for uniform processing.
+                const message = rawMsg.toLowerCase();
+
+                // Expected format: board code and underscore and then color (e.g., "a1_green")
+                const regex = /^(a1|a2|c1|c2|d1|d2|d3|e1|e2|f1)_(green|red)$/i;
+                const match = message.match(regex);
+                if (!match) {
+                    console.warn("Ignoring non-command message:", message);
+                    return;
+                }
+
+                const board = match[1].toLowerCase(); // e.g. "a1"
+                const color = match[2].toLowerCase(); // "green" or "red"
+                console.log(`Parsed command: board = ${board}, color = ${color}`);
+
+                // For this example, we assume Scenario 1 is active.
+                const cardId = "card-" + board; // e.g., "card-a1"
+                const cardElement = document.getElementById(cardId);
+                if (!cardElement) {
+                    console.error("No card element found with id:", cardId);
+                    return;
+                }
+
+                // Update the card element's class.
+                if (color === "green") {
+                    cardElement.classList.add("green");
+                    console.log(`Added "green" class to ${cardId}`);
+                } else {
+                    cardElement.classList.remove("green");
+                    console.log(`Removed "green" class from ${cardId}`);
+                }
             };
 
             // ------------------------------
@@ -685,17 +744,17 @@
              *
              * @param {string} color - The LED color command ("green" or "red").
              */
-            function sendCommand(color) {
-                // Get the current board command (e.g., "A1")
-                const boardCmd = boardCommands[boardIndex];
-                // Derive the board letter (first character)
-                const boardLetter = boardCmd.charAt(0);
-                // Construct the full command string
-                const command = "FROM NANO " + boardLetter + ": " + boardCmd + "_" + color.toUpperCase();
-                socket.send(command);
-                console.log("Sent command:", command);
-                boardIndex = (boardIndex + 1) % boardCommands.length;
-            }
+            //function sendCommand(color) {
+            //    // Get the current board command (e.g., "A1")
+            //    const boardCmd = boardCommands[boardIndex];
+            //    // Derive the board letter (first character)
+            //    const boardLetter = boardCmd.charAt(0);
+            //    // Construct the full command string
+            //    const command = "FROM NANO " + boardLetter + ": " + boardCmd + "_" + color.toUpperCase();
+            //    socket.send(command);
+            //    console.log("Sent command:", command);
+            //    boardIndex = (boardIndex + 1) % boardCommands.length;
+            //}
             // ------------------------------
             // Sound managment: playSound(newSound)
             // ------------------------------
@@ -722,15 +781,18 @@
             // ------------------------------
             // UI Update Functions
             // ------------------------------
-            function createCards(container, greenCount, total) {
-                total = total || 10;
-                container.innerHTML = '';
-                for (let i = 0; i < total; i++) {
+            function createCards(container) {
+                // Assume boardCommands is the array of board codes in order:
+                // ["A1", "A2", "C1", "C2", "D1", "D2", "D3", "E1", "E2", "F1"]
+                container.innerHTML = ''; // Clear any existing elements
+                boardCommands.forEach(boardCmd => {
+                    // Create a new card element
                     const card = document.createElement('div');
                     card.classList.add('card');
-                    if (i < greenCount) card.classList.add('green');
+                    // Set an id in lower case (e.g., "card-a1")
+                    card.id = "card-" + boardCmd.toLowerCase();
                     container.appendChild(card);
-                }
+                });
             }
 
             function updateUI() {
@@ -745,14 +807,10 @@
                     } else if (cardCount === 5) {
                         messageCA.textContent = "That’s right! California currently uses about 56% of clean electricity!";
                         playSound(winSound);
-                        // Show animation
-                        // Show both the Sun Burst and Extra Animation concurrently
                         const sunburstEl = document.getElementById('sunburst');
                         const extraAnimationEl = document.getElementById('extra-animation');
                         sunburstEl.style.display = 'block';
                         extraAnimationEl.style.display = 'block';
-
-                        // Hide the animation after 3 seconds (adjust as needed)
                         setTimeout(() => {
                             sunburstEl.style.display = 'none';
                             extraAnimationEl.style.display = 'none';
@@ -763,7 +821,7 @@
                         messageCA.textContent = "";
                     }
                 }
-                // Scenario 2: Show full progress (San Mateo County)
+                // Scenario 2: Update the progress for San Mateo County
                 let smGreen = cardCount >= 5 ? cardCount : 5;
                 createCards(cardsSM, smGreen);
                 if (cardCount === 7) {
@@ -786,7 +844,7 @@
             function resetExhibit() {
                 cardCount = 0;
                 currentInstruction = 1;
-                boardIndex = 0; // Reset board order sequence
+                boardIndex = 0;
                 instructionContainer.style.display = 'none';
                 mainScreen.style.display = 'none';
                 scenario1Page.style.display = 'none';
