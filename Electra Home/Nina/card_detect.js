@@ -10,7 +10,7 @@ const app = express();
 const port = 80;
 
 // ✅ Correct the serial port name for Windows
-const portName = "COM7"; // Ensure this matches your detected port
+const portName = "COM10"; // Ensure this matches your detected port
 const serialPort = new SerialPort({
   path: portName,
   baudRate: 9600,
