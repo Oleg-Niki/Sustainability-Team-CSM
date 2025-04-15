@@ -58,16 +58,24 @@ void loop() {
         String uid = readUID(rfid1);
         uid.toLowerCase();  // Convert UID to lowercase for consistency
 
+        // Check for the reset card UID.
+        if (uid == "239dc20d") {  
+          Serial.println("RESET");
+          rfid1.PICC_HaltA();
+          // Skip further checks to avoid sending any additional command.
+          continue;
+        }
+
         // Check for red card UIDs:
         if (uid == "53135a10" || uid == "a35abb10" || uid == "d3f74310" ||
             uid == "c3c55510" || uid == "d3325d10" || uid == "7312d927" ||
-            uid == "63873029") {
+            uid == "63873029" || uid == "a3b96d29" || uid == "436d2d10") {
           Serial.println("A1_RED");
         }
         // Check for green card UIDs:
-        else if (uid == "43864828" || uid == "93552512" || uid == "73463010" ||
+        else if (uid == "73281e2a" || uid == "43864828" || uid == "93552512" || uid == "73463010" ||
                  uid == "530e5c10" || uid == "73606210" || uid == "297ac54a" ||
-                 uid == "b3604510" || uid == "435e4410") {
+                 uid == "b3604510" || uid == "435e4410" || uid == "7348ace4") {
           Serial.println("A1_GREEN");
         }
         rfid1.PICC_HaltA();

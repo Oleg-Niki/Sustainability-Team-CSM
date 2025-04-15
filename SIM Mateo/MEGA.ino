@@ -168,6 +168,18 @@ void processSerialCommands() {
 // Process Incoming LED Commands
 // *********************
 void handleLEDCommand(String command) {
+  // Remove any extra whitespace from the command.
+  command.trim();
+  
+  // Check for the RESET command first.
+  if (command == "RESET") {
+    Serial.println("Resetting LEDs and system state...");
+    resetLEDs();             // Turn all LEDs off.
+    currentState = STATE_IDLE; // Reset the system state.
+    blinkCount = 0;            // Reset blink counter.
+    blinkOn = false;           // Reset blinking phase.
+    return;                  // Exit without processing further.
+  }
   // --- Board A Commands ---
   if (command == "A1_RED") { 
     digitalWrite(LED_RED_A1, LOW);
