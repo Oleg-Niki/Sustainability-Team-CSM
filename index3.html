@@ -248,6 +248,7 @@
             transform: translateX(-50%);
             max-width: 80%;
             height: auto;
+            opacity: 0.35;
         }
         
         #scenario1-page,
@@ -417,6 +418,15 @@
                 width: 95%;
             }
         }
+        
+        @media (max-width: 1024px) {
+            #instruction-nav button {
+                font-size: 2rem;
+                /* Reduce font size */
+                padding: 15px 30px;
+                /* Reduce padding */
+            }
+        }
     </style>
 </head>
 
@@ -436,17 +446,17 @@
     <div id="instruction-container">
         <!-- Instruction Screen 1 -->
         <div id="instruction-screen-1" class="instruction-screen">
-            <img src="/assets/Instructions1.png" alt="Instruction 1">
+            <img src="assets/instructions1.png" alt="Instruction 1">
             <!-- <p>Each green card represents 10% of clean electricity.</p> -->
         </div>
         <!-- Instruction Screen 2 -->
         <div id="instruction-screen-2" class="instruction-screen">
-            <img src="/assets/Instructions2.png" alt="Instruction 2">
+            <img src="assets/instructions2.png" alt="Instruction 2">
             <!-- <p>Each red card represents 10% of traditional carbon‑intensive energy.</p> -->
         </div>
         <!-- Instruction Screen 3 -->
         <div id="instruction-screen-3" class="instruction-screen">
-            <img src="/assets/Instructions3.png" alt="Instruction 3">
+            <img src="assets/instructions3.png" alt="Instruction 3">
             <!-- <p>Tap each card on SIM Mateo's generator to visualize the amount of clean electricity the area is using.</p> -->
         </div>
         <!-- Navigation for instructions -->
@@ -458,42 +468,66 @@
 
     <!-- Main Interactive Screen -->
     <div id="main-screen">
-        <!-- Controls: Add/Remove Cards (visible on both scenario pages) -->
-        <div id="controls">
+        <!-- Controls: (Hidden now so website doesn't send commands) -->
+        <div id="controls" style="display: none;">
             <button id="add-card">Green Card</button>
             <button id="remove-card">Red Card</button>
         </div>
         <!-- Win Animation -->
         <div id="extra-animation" style="display: none; position: fixed; top: 40%; left: 50%; transform: translate(-50%, -50%); z-index: 10000;">
-            <img src="/assets/confetti.gif" alt="Extra Animation - confetti">
+            <img src="assets/confetti.gif" alt="Extra Animation - confetti">
         </div>
         <div id="sunburst" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 9999;">
-            <img src="/assets/Sun Burst.gif" alt="Sun Burst Animation">
+            <img src="assets/sunburst.gif" alt="Sun Burst Animation">
         </div>
         <!-- Scenario 1 Page -->
         <div id="scenario1-page">
             <div class="scenario">
-
                 <img src="assets/california.png" alt="Transparent California Overlay" class="transparent-overlay">
-                <div class="cards-container" id="cards-ca"></div>
+                <!-- Card containers with 10 separate card elements -->
+                <div class="cards-container" id="cards-all">
+                    <div class="card" id="card-a1"></div>
+                    <div class="card" id="card-a2"></div>
+                    <div class="card" id="card-c1"></div>
+                    <div class="card" id="card-c2"></div>
+                    <div class="card" id="card-d1"></div>
+                    <div class="card" id="card-d2"></div>
+                    <div class="card" id="card-d3"></div>
+                    <div class="card" id="card-e1"></div>
+                    <div class="card" id="card-e2"></div>
+                    <div class="card" id="card-f1"></div>
+                </div>
                 <div class="message" id="message-ca"></div>
-                <h2 style="text-align: center;"> What percentage of California's electricity is clean? (e.g. solar, hydro, wind, nuclear)</h2>
+                <h2 style="text-align: center;">
+                    What percentage of California's electricity is clean? (e.g. solar, hydro, wind, nuclear)
+                </h2>
             </div>
             <div id="scenario-nav">
                 <button id="scenario1-back">Back</button>
                 <button id="scenario1-next">Next</button>
             </div>
-
-
         </div>
-        <!-- Scenario 2 Page -->
+        <!-- Scenario 2 Page (if needed; you can use a similar structure) -->
         <div id="scenario2-page" style="display: none;">
             <div class="scenario">
-
                 <img src="assets/smc.png" alt="Transparent SMC Overlay" class="transparent-overlay">
-                <div class="cards-container" id="cards-sm"></div>
+                <!-- For Scenario 2, if you wish to have a similar layout -->
+                <div class="cards-container" id="cards-all-sm">
+                    <div class="card" id="card-a1-sm"></div>
+                    <div class="card" id="card-a2-sm"></div>
+                    <div class="card" id="card-c1-sm"></div>
+                    <div class="card" id="card-c2-sm"></div>
+                    <div class="card" id="card-d1-sm"></div>
+                    <div class="card" id="card-d2-sm"></div>
+                    <div class="card" id="card-d3-sm"></div>
+                    <div class="card" id="card-e1-sm"></div>
+                    <div class="card" id="card-e2-sm"></div>
+                    <div class="card" id="card-f1-sm"></div>
+                </div>
                 <div class="message" id="message-sm"></div>
-                <h2 style="text-align: center;">What percentage of San Mateo County's electricity is clean?</h2>
+                <h2 style="text-align: center;">
+                    What percentage of San Mateo County's electricity is clean?
+                </h2>
             </div>
             <div id="scenario-nav">
                 <button id="scenario2-back">Back</button>
@@ -524,7 +558,7 @@
     <!-- THE END Screen -->
     <div id="theEndScreen" style="display: none;">
         <div id="theEndContent" style="text-align: center; padding: 20px;">
-            <img src="/assets/gameOver.jpg" alt="Game Over" style="width: 100vw; height: 100vh; object-fit: cover;">
+            <img src="assets/gameover.jpg" alt="Game Over" style="width: 100vw; height: 100vh; object-fit: cover;">
         </div>
     </div>
 
@@ -546,11 +580,13 @@
             const header = document.getElementById('header');
             const restartButton = document.getElementById('restart-button');
             const scenario1Page = document.getElementById('scenario1-page');
-            const cardsCA = document.getElementById('cards-ca');
+            // Define the Scenario 1 card container as cardsCA (using the correct id "cards-all")
+            const cardsCA = document.getElementById('cards-all');
+            // Correct the Scenario 2 card container using the id "cards-all-sm"
+            const cardsSM = document.getElementById('cards-all-sm');
             const messageCA = document.getElementById('message-ca');
             const scenario1Next = document.getElementById('scenario1-next');
             const scenario2Page = document.getElementById('scenario2-page');
-            const cardsSM = document.getElementById('cards-sm');
             const messageSM = document.getElementById('message-sm');
             const scenario2Back = document.getElementById('scenario2-back');
             const addCardButton = document.getElementById('add-card');
@@ -558,7 +594,6 @@
             const modal = document.getElementById('modal');
             const modalClose = document.getElementById('modal-close');
             const finalModal = document.getElementById('finalModal');
-            const playAgainButton = document.getElementById('play-again');
             const theEndScreen = document.getElementById('theEndScreen');
             const theEndButton = document.getElementById('theEndButton');
 
@@ -612,23 +647,24 @@
             // ------------------------------
             // Sound Effects Setup
             // ------------------------------
-            const clickSound = new Audio('/assets/SoundWindowsNavigationStart.wav');
-            const scenarioCASound_Start = new Audio('/assets/05-California.mp3');
-            const scenarioCASound_30 = new Audio('/assets/SoundScenarioCA_30.mp3');
-            const scenarioCASound_win = new Audio('/assets/SoundScenarioCA_win.mp3');
-            const scenarioSMCSound_Start = new Audio('/assets/SoundScenarioSMC_Start.mp3');
-            const scenarioSMCSound_70 = new Audio('/assets/SoundScenarioSMC_70.mp3');
-            const scenarioSMCSound_win = new Audio('/assets/SoundScenarioSMC_win.mp3');
-            const wrongSound = new Audio('/assets/SoundWindowsCriticalStop.mp3');
-            const welcomeSound = new Audio('/assets/01-Welcome.mp3');
-            const instruction1Sound = new Audio('/assets/02-Green Card.mp3');
-            const instruction2Sound = new Audio('/assets/03-Red Card.mp3');
-            const instruction3Sound = new Audio('/assets/04-Tap.mp3');
-            const winSound = new Audio('/assets/Tada_final.mp3');
+            const clickSound = new Audio('assets/SoundWindowsNavigationStart.wav');
+            const scenarioCASound_Start = new Audio('assets/05-California.mp3');
+            const scenarioCASound_30 = new Audio('assets/SoundScenarioCA_30.mp3');
+            const scenarioCASound_win = new Audio('assets/SoundScenarioCA_win.mp3');
+            const scenarioSMCSound_Start = new Audio('assets/SoundScenarioSMC_Start.mp3');
+            const scenarioSMCSound_70 = new Audio('assets/SoundScenarioSMC_70.mp3');
+            const scenarioSMCSound_win = new Audio('assets/SoundScenarioSMC_win.mp3');
+            const wrongSound = new Audio('assets/SoundWindowsCriticalStop.mp3');
+            const welcomeSound = new Audio('assets/01-Welcome.mp3');
+            const instruction1Sound = new Audio('assets/02-Green Card.mp3');
+            const instruction2Sound = new Audio('assets/03-Red Card.mp3');
+            const instruction3Sound = new Audio('assets/04-Tap.mp3');
+            const winSound = new Audio('assets/Tada_final.mp3');
 
             // ------------------------------
             // Global Variables and DOM References
             // ------------------------------
+
             let socket;
             let instructionSoundTimer;
             let currentSound = null; // Variable to track the currently playing sound
@@ -643,21 +679,59 @@
             socket.onopen = () => {
                 console.log("Connected to SIM Mateo WebSocket server");
             };
+            // Update the onmessage handler so that it updates card container colors.
             socket.onmessage = (event) => {
                 console.log("Received from Arduino:", event.data);
-                const command = event.data.trim().toLowerCase();
-                if (command === "red") {
-                    removeCardButton.click();
-                } else if (command === "green") {
-                    addCardButton.click();
+
+                let rawMsg = event.data.trim();
+                console.log("Raw message:", rawMsg);
+
+                // Strip any prefix like "FROM NANO ..." if present.
+                if (rawMsg.toLowerCase().includes("from nano")) {
+                    const colonIndex = rawMsg.indexOf(":");
+                    if (colonIndex !== -1) {
+                        rawMsg = rawMsg.substring(colonIndex + 1).trim();
+                    }
                 }
+                console.log("Processed message after prefix removal:", rawMsg);
+
+                const message = rawMsg.toLowerCase();
+                const regex = /^(a1|a2|c1|c2|d1|d2|d3|e1|e2|f1)_(green|red)$/i;
+                const match = message.match(regex);
+                if (!match) {
+                    console.warn("Ignoring non-command message:", message);
+                    return;
+                }
+
+                const board = match[1].toLowerCase();
+                const color = match[2].toLowerCase();
+                console.log(`Parsed command: board = ${board}, color = ${color}`);
+
+                // Choose the correct card element based on which scenario is visible.
+                let cardId;
+                if (scenario1Page.style.display !== 'none') {
+                    cardId = "card-" + board;
+                } else if (scenario2Page.style.display !== 'none') {
+                    cardId = "card-" + board + "-sm";
+                }
+                const cardElement = document.getElementById(cardId);
+                if (!cardElement) {
+                    console.error("No card element found with id:", cardId);
+                    return;
+                }
+
+                if (color === "green") {
+                    cardElement.classList.add("green");
+                    console.log(`Added "green" class to ${cardId}`);
+                } else {
+                    cardElement.classList.remove("green");
+                    console.log(`Removed "green" class from ${cardId}`);
+                }
+
+                // Update overall progress, which then calls updateUI.
+                updateProgress();
             };
-            socket.onerror = (error) => {
-                console.error("WebSocket error:", error);
-            };
-            socket.onclose = () => {
-                console.log("WebSocket connection closed");
-            };
+
 
             // ------------------------------
             // Board Command Configuration for Sequential Command Sending
@@ -675,17 +749,17 @@
              *
              * @param {string} color - The LED color command ("green" or "red").
              */
-            function sendCommand(color) {
-                // Get the current board command (e.g., "A1")
-                const boardCmd = boardCommands[boardIndex];
-                // Derive the board letter (first character)
-                const boardLetter = boardCmd.charAt(0);
-                // Construct the full command string
-                const command = "FROM NANO " + boardLetter + ": " + boardCmd + "_" + color.toUpperCase();
-                socket.send(command);
-                console.log("Sent command:", command);
-                boardIndex = (boardIndex + 1) % boardCommands.length;
-            }
+            //function sendCommand(color) {
+            //    // Get the current board command (e.g., "A1")
+            //    const boardCmd = boardCommands[boardIndex];
+            //    // Derive the board letter (first character)
+            //    const boardLetter = boardCmd.charAt(0);
+            //    // Construct the full command string
+            //    const command = "FROM NANO " + boardLetter + ": " + boardCmd + "_" + color.toUpperCase();
+            //    socket.send(command);
+            //    console.log("Sent command:", command);
+            //    boardIndex = (boardIndex + 1) % boardCommands.length;
+            //}
             // ------------------------------
             // Sound managment: playSound(newSound)
             // ------------------------------
@@ -712,21 +786,90 @@
             // ------------------------------
             // UI Update Functions
             // ------------------------------
-            function createCards(container, greenCount, total) {
-                total = total || 10;
-                container.innerHTML = '';
-                for (let i = 0; i < total; i++) {
-                    const card = document.createElement('div');
-                    card.classList.add('card');
-                    if (i < greenCount) card.classList.add('green');
-                    container.appendChild(card);
+            function updateProgress() {
+                let greenCards = 0;
+
+                // When Scenario 1 is active, count the green cards in "#cards-all"
+                if (scenario1Page.style.display !== 'none') {
+                    greenCards = document.querySelectorAll("#cards-all .card.green").length;
+                }
+                // When Scenario 2 is active, count the green cards in "#cards-all-sm"
+                else if (scenario2Page.style.display !== 'none') {
+                    greenCards = document.querySelectorAll("#cards-all-sm .card.green").length;
+                }
+
+                cardCount = greenCards;
+                console.log("Updated cardCount:", cardCount);
+
+                // If Scenario 1 is active and we've reached exactly 5 green cards,
+                // automatically switch to Scenario 2 after 5 seconds.
+                if (scenario1Page.style.display !== 'none' && cardCount === 5) {
+                    setTimeout(() => {
+                        // Double-check that we're still in Scenario 1 before switching.
+                        if (scenario1Page.style.display !== 'none') {
+                            console.log("Auto-switching to Scenario 2 now.");
+                            scenario1Page.style.display = 'none';
+                            scenario2Page.style.display = 'flex';
+                            // Recreate Scenario 2's cards with unique IDs.
+                            initializeScenario2Cards();
+                        }
+                    }, 5000); // Wait 5 seconds before switching.
+                }
+
+                // Now update the UI messages and animations based on the new cardCount.
+                updateUI();
+            }
+
+
+            function initializeCards() {
+                // Create cards in the container for Scenario 1 (with id 'cards-all')
+                // Assume boardCommands is the array of board codes (e.g., ["A1", "A2", "C1", ...])
+                if (cardsCA && cardsCA.innerHTML.trim() === "") {
+                    boardCommands.forEach(boardCmd => {
+                        const card = document.createElement('div');
+                        card.classList.add('card');
+                        // Set the id to lowercase, e.g., "card-a1"
+                        card.id = "card-" + boardCmd.toLowerCase();
+                        cardsCA.appendChild(card);
+                    });
                 }
             }
 
+            function initializeScenario2Cards() {
+                if (cardsSM) {
+                    cardsSM.innerHTML = ''; // Clear any existing elements.
+                    boardCommands.forEach(boardCmd => {
+                        const card = document.createElement('div');
+                        card.classList.add('card');
+                        // Use a "-sm" suffix for Scenario 2 IDs, e.g., "card-a1-sm".
+                        card.id = "card-" + boardCmd.toLowerCase() + "-sm";
+                        // Optionally copy the green state from Scenario 1 (if needed):
+                        let sourceCard = document.getElementById("card-" + boardCmd.toLowerCase());
+                        if (sourceCard && sourceCard.classList.contains("green")) {
+                            card.classList.add("green");
+                        }
+                        cardsSM.appendChild(card);
+                    });
+                }
+            }
+
+
+            function createCards(container) {
+                // Assume boardCommands is the array of board codes in order:
+                // ["A1", "A2", "C1", "C2", "D1", "D2", "D3", "E1", "E2", "F1"]
+                container.innerHTML = ''; // Clear any existing elements
+                boardCommands.forEach(boardCmd => {
+                    // Create a new card element
+                    const card = document.createElement('div');
+                    card.classList.add('card');
+                    // Set an id in lower case (e.g., "card-a1")
+                    card.id = "card-" + boardCmd.toLowerCase();
+                    container.appendChild(card);
+                });
+            }
+
             function updateUI() {
-                // Scenario 1: Show up to 5 cards (California)
-                let caGreen = cardCount <= 5 ? cardCount : 5;
-                createCards(cardsCA, caGreen);
+                // --- Scenario 1 (California) ---
                 if (scenario1Page.style.display !== 'none') {
                     if (cardCount === 3) {
                         messageCA.textContent = "California state has reached 30% clean energy by 1985!";
@@ -735,14 +878,12 @@
                     } else if (cardCount === 5) {
                         messageCA.textContent = "That’s right! California currently uses about 56% of clean electricity!";
                         playSound(winSound);
-                        // Show animation
-                        // Show both the Sun Burst and Extra Animation concurrently
+                        // Show animation (Sun Burst and Extra Animation)
                         const sunburstEl = document.getElementById('sunburst');
                         const extraAnimationEl = document.getElementById('extra-animation');
                         sunburstEl.style.display = 'block';
                         extraAnimationEl.style.display = 'block';
-
-                        // Hide the animation after 3 seconds (adjust as needed)
+                        // Hide the animation after 3 seconds and then play the secondary win sound
                         setTimeout(() => {
                             sunburstEl.style.display = 'none';
                             extraAnimationEl.style.display = 'none';
@@ -753,20 +894,21 @@
                         messageCA.textContent = "";
                     }
                 }
-                // Scenario 2: Show full progress (San Mateo County)
-                let smGreen = cardCount >= 5 ? cardCount : 5;
-                createCards(cardsSM, smGreen);
-                if (cardCount === 7) {
-                    messageSM.textContent = "You’re getting close! San Mateo reached 75% clean electricity in 2016";
-                    playSound(scenarioSMCSound_70);
-                    animateElement(messageSM, 'button-click', 300);
-                } else if (cardCount === 10) {
-                    messageSM.textContent = "You got it! San Mateo serves 100% clean electricity – leading the nation!";
-                    playSound(scenarioSMCSound_win);
-                    animateElement(messageSM, 'button-click', 300);
-                    setTimeout(showFinalModal, 1000);
-                } else {
-                    messageSM.textContent = "";
+
+                // --- Scenario 2 (San Mateo County) ---
+                if (scenario2Page.style.display !== 'none') {
+                    if (cardCount === 7) {
+                        messageSM.textContent = "You’re getting close! San Mateo reached 75% clean electricity in 2016";
+                        playSound(scenarioSMCSound_70);
+                        animateElement(messageSM, 'button-click', 300);
+                    } else if (cardCount === 10) {
+                        messageSM.textContent = "You got it! San Mateo serves 100% clean electricity – leading the nation!";
+                        playSound(scenarioSMCSound_win);
+                        animateElement(messageSM, 'button-click', 300);
+                        setTimeout(showFinalModal, 1000);
+                    } else {
+                        messageSM.textContent = "";
+                    }
                 }
             }
 
@@ -776,7 +918,7 @@
             function resetExhibit() {
                 cardCount = 0;
                 currentInstruction = 1;
-                boardIndex = 0; // Reset board order sequence
+                boardIndex = 0;
                 instructionContainer.style.display = 'none';
                 mainScreen.style.display = 'none';
                 scenario1Page.style.display = 'none';
@@ -856,6 +998,7 @@
                 scenario1Page.style.display = 'flex';
                 scenario2Page.style.display = 'none';
                 playSound(scenarioCASound_Start);
+                initializeCards(); // Create cards only once if not already created.
             }
 
             function showScenario2() {
@@ -965,29 +1108,19 @@
              * @param {string} color - The LED color command ("green" or "red").
              */
             function sendCommand(color) {
+                // Get the current board command (for example, "A1")
                 const boardCmd = boardCommands[boardIndex];
-                const boardLetter = boardCmd.charAt(0);
-                // First message with the prefix
-                const command1 = "FROM NANO " + boardLetter + ": " + boardCmd + "_" + color.toUpperCase();
-                if (socket.readyState === WebSocket.OPEN) {
-                    socket.send(command1);
-                    console.log("Sent command:", command1);
-                } else {
-                    console.error("Socket not open for command:", command1);
-                }
-
-                // Update board index for next message
-                boardIndex = (boardIndex + 1) % boardCommands.length;
-
-                // Second message: just the color
-                const command2 = color.toUpperCase();
-                if (socket.readyState === WebSocket.OPEN) {
-                    socket.send(command2);
-                    console.log("Sent command:", command2);
-                } else {
-                    console.error("Socket not open for command:", command2);
-                }
+                // Prepend the "WEBSITE:" prefix to indicate the source.
+                const command = "WEBSITE:" + boardCmd + "_" + color.toUpperCase();
+                // Append a newline so Arduino's readStringUntil('\n') works as expected.
+                // Delay sending the command 200 ms
+                setTimeout(() => {
+                    socket.send(command + "\n");
+                    console.log("Sent command:", command);
+                    boardIndex = (boardIndex + 1) % boardCommands.length;
+                }, 200);
             }
+
 
             function showTheEndScreen() {
                 mainScreen.style.display = 'none';

@@ -12,7 +12,7 @@ const port = 80;
 app.use(express.static('.'));
 
 // Replace with your Arduino port name (e.g., "COM12" for Windows or "/dev/ttyACM0" for Linux)
-const portName = "COM7"; // Adjust as needed
+const portName = "COM9"; // Adjust as needed
 const serialPort = new SerialPort({
     path: portName,
     baudRate: 9600,
@@ -44,24 +44,31 @@ const parser = serialPort.pipe(new ReadlineParser({ delimiter: "\n" }));
 let messageQueue = [];
 
 // Process incoming serial data (from Arduino)
-// For example, if Arduino sends "RED" or "GREEN", this code sends it over WebSocket.
 let primaryWs = null;
 parser.on("data", (data) => {
-    const command = data.trim().toUpperCase();
+    // Trim extra whitespace/newlines
+    const command = data.trim();
     console.log(`Received from MEGA: ${command}`);
-    if (command === "RED" || command === "GREEN") {
-        const lowerCmd = command.toLowerCase();
+
+    // Validate that the command matches the expected format,
+    // e.g., "A1_GREEN", "A2_RED", "C1_GREEN", etc.
+    const validCmdRegex = /^(A1|A2|C1|C2|D1|D2|D3|E1|E2|F1)_(RED|GREEN)$/;
+    if (validCmdRegex.test(command)) {
+        // If a valid command is received and there is an open WebSocket connection,
+        // forward the command exactly as received.
         if (primaryWs && primaryWs.readyState === primaryWs.OPEN) {
-            // Flush queued messages if any
+            // Flush queued messages, if any.
             if (messageQueue.length > 0) {
                 messageQueue.forEach((msg) => primaryWs.send(msg));
                 messageQueue = [];
             }
-            primaryWs.send(lowerCmd);
+            primaryWs.send(command);
         } else {
             console.warn("WebSocket not open; queuing command.");
-            messageQueue.push(lowerCmd);
+            messageQueue.push(command);
         }
+    } else {
+        console.warn("Unrecognized command format from Arduino:", command);
     }
 });
 

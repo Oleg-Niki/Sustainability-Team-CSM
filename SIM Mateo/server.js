@@ -11,7 +11,7 @@ const port = 80;
 app.use(express.static('.'));
 
 // Replace with your Arduino port name (e.g., "COM11")
-const portName = "COM12";
+const portName = "COM9";
 const serialPort = new SerialPort({
     path: portName,
     baudRate: 9600,
@@ -45,12 +45,20 @@ let messageQueue = [];
 // Process incoming serial data and forward commands if exactly "RED" or "GREEN"
 let primaryWs = null;
 parser.on("data", (data) => {
+    // Read the line, trim whitespace, and convert to uppercase for uniformity.
     const command = data.trim().toUpperCase();
     console.log(`Received from MEGA: ${command}`);
-    if (command === "RED" || command === "GREEN") {
+
+    // Define a regular expression for the expected board command pattern.
+    // This regex will match commands like A1_GREEN, A1_RED, C1_GREEN, etc.
+    const regex = /^(A1|A2|C1|C2|D1|D2|D3|E1|E2|F1)_(RED|GREEN)$/i;
+
+    // Test if the command matches the expected pattern.
+    if (regex.test(command)) {
+        // Convert it to lower case for sending to the client.
         const lowerCmd = command.toLowerCase();
         if (primaryWs && primaryWs.readyState === WebSocket.OPEN) {
-            // Flush any queued messages before sending the current command
+            // Flush any queued messages and then send the current command.
             if (messageQueue.length > 0) {
                 messageQueue.forEach((msg) => primaryWs.send(msg));
                 messageQueue = [];
@@ -60,6 +68,8 @@ parser.on("data", (data) => {
             console.warn("WebSocket not open; queuing command.");
             messageQueue.push(lowerCmd);
         }
+    } else {
+        console.warn("Ignoring non-command message:", command);
     }
 });
 
@@ -68,9 +78,25 @@ const wss = new WebSocketServer({ server });
 
 wss.on("connection", (ws) => {
     console.log("WebSocket client connected");
-    ws.on("message", (message) => {
+    ws.on("message", (msg) => {
+        // Convert the message to a string if it isn't already.
+        let message = (typeof msg === "string") ? msg : msg.toString('utf8');
         console.log(`Message from client: ${message}`);
+
+        // Ensure it ends with a newline. If not, append one.
+        // if (!message.endsWith("\n")) {
+        //     message += "\n";
+        // }
+
+        // serialPort.write(message, (err) => {
+        //     if (err) {
+        //         console.error("Error writing to serial port:", err.message);
+        //     } else {
+        //         console.log("Sent to Arduino:", message);
+        //     }
+        // });
     });
+
     ws.send("Connected to SIM Mateo WebSocket server");
     primaryWs = ws;
     // Delay flushing queued commands to ensure the client's onmessage handler is ready

@@ -2,10 +2,10 @@
     "name": "sim-mateo",
     "version": "1.0.0",
     "description": "SIM Mateo Clean Energy Exhibit with Arduino integration",
-    "main": "server2.js",
+    "main": "server.js",
     "type": "module",
     "scripts": {
-        "start": "node server2.js",
+        "start": "node server.js",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "author": "Your Name",
