@@ -84,17 +84,17 @@ wss.on("connection", (ws) => {
         console.log(`Message from client: ${message}`);
 
         // Ensure it ends with a newline. If not, append one.
-        if (!message.endsWith("\n")) {
-            message += "\n";
-        }
+        // if (!message.endsWith("\n")) {
+        //     message += "\n";
+        // }
 
-        serialPort.write(message, (err) => {
-            if (err) {
-                console.error("Error writing to serial port:", err.message);
-            } else {
-                console.log("Sent to Arduino:", message);
-            }
-        });
+        // serialPort.write(message, (err) => {
+        //     if (err) {
+        //         console.error("Error writing to serial port:", err.message);
+        //     } else {
+        //         console.log("Sent to Arduino:", message);
+        //     }
+        // });
     });
 
     ws.send("Connected to SIM Mateo WebSocket server");

@@ -664,6 +664,7 @@
             // ------------------------------
             // Global Variables and DOM References
             // ------------------------------
+
             let socket;
             let instructionSoundTimer;
             let currentSound = null; // Variable to track the currently playing sound
@@ -682,11 +683,10 @@
             socket.onmessage = (event) => {
                 console.log("Received from Arduino:", event.data);
 
-                // Get the raw message string and trim whitespace.
                 let rawMsg = event.data.trim();
                 console.log("Raw message:", rawMsg);
 
-                // Check for a prefix (e.g., "FROM NANO") and remove it.
+                // Strip any prefix like "FROM NANO ..." if present.
                 if (rawMsg.toLowerCase().includes("from nano")) {
                     const colonIndex = rawMsg.indexOf(":");
                     if (colonIndex !== -1) {
@@ -695,10 +695,7 @@
                 }
                 console.log("Processed message after prefix removal:", rawMsg);
 
-                // Convert the message to lower case for uniform processing.
                 const message = rawMsg.toLowerCase();
-
-                // Expected format: board code and underscore and then color (e.g., "a1_green")
                 const regex = /^(a1|a2|c1|c2|d1|d2|d3|e1|e2|f1)_(green|red)$/i;
                 const match = message.match(regex);
                 if (!match) {
@@ -706,19 +703,23 @@
                     return;
                 }
 
-                const board = match[1].toLowerCase(); // e.g. "a1"
-                const color = match[2].toLowerCase(); // "green" or "red"
+                const board = match[1].toLowerCase();
+                const color = match[2].toLowerCase();
                 console.log(`Parsed command: board = ${board}, color = ${color}`);
 
-                // For this example, we assume Scenario 1 is active.
-                const cardId = "card-" + board; // e.g., "card-a1"
+                // Choose the correct card element based on which scenario is visible.
+                let cardId;
+                if (scenario1Page.style.display !== 'none') {
+                    cardId = "card-" + board;
+                } else if (scenario2Page.style.display !== 'none') {
+                    cardId = "card-" + board + "-sm";
+                }
                 const cardElement = document.getElementById(cardId);
                 if (!cardElement) {
                     console.error("No card element found with id:", cardId);
                     return;
                 }
 
-                // Update the card element's class.
                 if (color === "green") {
                     cardElement.classList.add("green");
                     console.log(`Added "green" class to ${cardId}`);
@@ -726,7 +727,11 @@
                     cardElement.classList.remove("green");
                     console.log(`Removed "green" class from ${cardId}`);
                 }
+
+                // Update overall progress, which then calls updateUI.
+                updateProgress();
             };
+
 
             // ------------------------------
             // Board Command Configuration for Sequential Command Sending
@@ -781,6 +786,74 @@
             // ------------------------------
             // UI Update Functions
             // ------------------------------
+            function updateProgress() {
+                let greenCards = 0;
+
+                // When Scenario 1 is active, count the green cards in "#cards-all"
+                if (scenario1Page.style.display !== 'none') {
+                    greenCards = document.querySelectorAll("#cards-all .card.green").length;
+                }
+                // When Scenario 2 is active, count the green cards in "#cards-all-sm"
+                else if (scenario2Page.style.display !== 'none') {
+                    greenCards = document.querySelectorAll("#cards-all-sm .card.green").length;
+                }
+
+                cardCount = greenCards;
+                console.log("Updated cardCount:", cardCount);
+
+                // If Scenario 1 is active and we've reached exactly 5 green cards,
+                // automatically switch to Scenario 2 after 5 seconds.
+                if (scenario1Page.style.display !== 'none' && cardCount === 5) {
+                    setTimeout(() => {
+                        // Double-check that we're still in Scenario 1 before switching.
+                        if (scenario1Page.style.display !== 'none') {
+                            console.log("Auto-switching to Scenario 2 now.");
+                            scenario1Page.style.display = 'none';
+                            scenario2Page.style.display = 'flex';
+                            // Recreate Scenario 2's cards with unique IDs.
+                            initializeScenario2Cards();
+                        }
+                    }, 5000); // Wait 5 seconds before switching.
+                }
+
+                // Now update the UI messages and animations based on the new cardCount.
+                updateUI();
+            }
+
+
+            function initializeCards() {
+                // Create cards in the container for Scenario 1 (with id 'cards-all')
+                // Assume boardCommands is the array of board codes (e.g., ["A1", "A2", "C1", ...])
+                if (cardsCA && cardsCA.innerHTML.trim() === "") {
+                    boardCommands.forEach(boardCmd => {
+                        const card = document.createElement('div');
+                        card.classList.add('card');
+                        // Set the id to lowercase, e.g., "card-a1"
+                        card.id = "card-" + boardCmd.toLowerCase();
+                        cardsCA.appendChild(card);
+                    });
+                }
+            }
+
+            function initializeScenario2Cards() {
+                if (cardsSM) {
+                    cardsSM.innerHTML = ''; // Clear any existing elements.
+                    boardCommands.forEach(boardCmd => {
+                        const card = document.createElement('div');
+                        card.classList.add('card');
+                        // Use a "-sm" suffix for Scenario 2 IDs, e.g., "card-a1-sm".
+                        card.id = "card-" + boardCmd.toLowerCase() + "-sm";
+                        // Optionally copy the green state from Scenario 1 (if needed):
+                        let sourceCard = document.getElementById("card-" + boardCmd.toLowerCase());
+                        if (sourceCard && sourceCard.classList.contains("green")) {
+                            card.classList.add("green");
+                        }
+                        cardsSM.appendChild(card);
+                    });
+                }
+            }
+
+
             function createCards(container) {
                 // Assume boardCommands is the array of board codes in order:
                 // ["A1", "A2", "C1", "C2", "D1", "D2", "D3", "E1", "E2", "F1"]
@@ -796,9 +869,7 @@
             }
 
             function updateUI() {
-                // Scenario 1: Show up to 5 cards (California)
-                let caGreen = cardCount <= 5 ? cardCount : 5;
-                createCards(cardsCA, caGreen);
+                // --- Scenario 1 (California) ---
                 if (scenario1Page.style.display !== 'none') {
                     if (cardCount === 3) {
                         messageCA.textContent = "California state has reached 30% clean energy by 1985!";
@@ -807,10 +878,12 @@
                     } else if (cardCount === 5) {
                         messageCA.textContent = "That’s right! California currently uses about 56% of clean electricity!";
                         playSound(winSound);
+                        // Show animation (Sun Burst and Extra Animation)
                         const sunburstEl = document.getElementById('sunburst');
                         const extraAnimationEl = document.getElementById('extra-animation');
                         sunburstEl.style.display = 'block';
                         extraAnimationEl.style.display = 'block';
+                        // Hide the animation after 3 seconds and then play the secondary win sound
                         setTimeout(() => {
                             sunburstEl.style.display = 'none';
                             extraAnimationEl.style.display = 'none';
@@ -821,20 +894,21 @@
                         messageCA.textContent = "";
                     }
                 }
-                // Scenario 2: Update the progress for San Mateo County
-                let smGreen = cardCount >= 5 ? cardCount : 5;
-                createCards(cardsSM, smGreen);
-                if (cardCount === 7) {
-                    messageSM.textContent = "You’re getting close! San Mateo reached 75% clean electricity in 2016";
-                    playSound(scenarioSMCSound_70);
-                    animateElement(messageSM, 'button-click', 300);
-                } else if (cardCount === 10) {
-                    messageSM.textContent = "You got it! San Mateo serves 100% clean electricity – leading the nation!";
-                    playSound(scenarioSMCSound_win);
-                    animateElement(messageSM, 'button-click', 300);
-                    setTimeout(showFinalModal, 1000);
-                } else {
-                    messageSM.textContent = "";
+
+                // --- Scenario 2 (San Mateo County) ---
+                if (scenario2Page.style.display !== 'none') {
+                    if (cardCount === 7) {
+                        messageSM.textContent = "You’re getting close! San Mateo reached 75% clean electricity in 2016";
+                        playSound(scenarioSMCSound_70);
+                        animateElement(messageSM, 'button-click', 300);
+                    } else if (cardCount === 10) {
+                        messageSM.textContent = "You got it! San Mateo serves 100% clean electricity – leading the nation!";
+                        playSound(scenarioSMCSound_win);
+                        animateElement(messageSM, 'button-click', 300);
+                        setTimeout(showFinalModal, 1000);
+                    } else {
+                        messageSM.textContent = "";
+                    }
                 }
             }
 
@@ -924,6 +998,7 @@
                 scenario1Page.style.display = 'flex';
                 scenario2Page.style.display = 'none';
                 playSound(scenarioCASound_Start);
+                initializeCards(); // Create cards only once if not already created.
             }
 
             function showScenario2() {
