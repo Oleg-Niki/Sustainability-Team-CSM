@@ -1,3 +1,11 @@
+// function prototypes (optional, but helps readability)
+void processSerialCommands();
+void handleLEDCommand(String command);
+bool checkGroupsActive();
+bool checkAllGreen();
+void updateSystemState();
+void updateBlinking(unsigned long currentMillis);
+void resetLEDs();
 // *********************
 // Define LED pins for each board and pair
 // *********************
@@ -49,8 +57,10 @@ unsigned long lastStateCheckTime = 0;
 const unsigned long stateCheckInterval = 100; // milliseconds
 
 // Variables for non-blocking blinking using millis()
+unsigned long blinkStartMillis = 0;        // when this blink burst began
+const unsigned long blinkDuration = 2500;  // total blink time in ms (3 s)
 unsigned long blinkPrevMillis = 0;
-const unsigned long blinkInterval = 500;      // Blink every 500ms
+const unsigned long blinkInterval = 300;      // Blink every 500ms
 int blinkCount = 0;
 const int totalBlinks = 5;                    // Blink 5 times
 bool blinkOn = false;                         // Current blinking phase
@@ -61,6 +71,27 @@ int ledPins[10] = { LED_GREEN_A1, LED_GREEN_A2,
                     LED_GREEN_D1, LED_GREEN_D2, LED_GREEN_D3,
                     LED_GREEN_E1, LED_GREEN_E2, 
                     LED_GREEN_F1 };
+
+// All LEDs (both red and green) in one array:
+const int allLedPins[] = {
+  // Board A
+  LED_RED_A1, LED_GREEN_A1,
+  LED_RED_A2, LED_GREEN_A2,
+  // Board C
+  LED_RED_C1, LED_GREEN_C1,
+  LED_RED_C2, LED_GREEN_C2,
+  // Board D
+  LED_RED_D1, LED_GREEN_D1,
+  LED_RED_D2, LED_GREEN_D2,
+  LED_RED_D3, LED_GREEN_D3,
+  // Board E
+  LED_RED_E1, LED_GREEN_E1,
+  LED_RED_E2, LED_GREEN_E2,
+  // Board F
+  LED_RED_F1, LED_GREEN_F1
+};
+const int numAllLeds = sizeof(allLedPins) / sizeof(allLedPins[0]);
+
 
 // *********************
 // Setup Function: Runs once at startup
@@ -104,6 +135,8 @@ void setup() {
 
   // Turn all LEDs off initially (active-low: HIGH means LED off)
   resetLEDs();
+
+  Serial.println("MEGA finished setup");
 }
 
 // *********************
@@ -113,19 +146,20 @@ void loop() {
   // Always process incoming serial commands:
   processSerialCommands();
   
-  unsigned long currentMillis = millis();
+  unsigned long now = millis();
   
   // Periodically update the system state (non-blocking):
-  if (currentMillis - lastStateCheckTime >= stateCheckInterval) {
-    lastStateCheckTime = currentMillis;
+  if (now - lastStateCheckTime >= stateCheckInterval) {
+    lastStateCheckTime = now;
     updateSystemState();
   }
   
   // If in the BLINKING state, update the blinking sequence non-blockingly:
   if (currentState == STATE_BLINKING) {
-    updateBlinking(currentMillis);
+    updateBlinking(now);
   }
 }
+
 
 // *********************
 // Serial Command Processing
@@ -170,16 +204,17 @@ void processSerialCommands() {
 void handleLEDCommand(String command) {
   // Remove any extra whitespace from the command.
   command.trim();
-  
-  // Check for the RESET command first.
-  if (command == "RESET") {
-    Serial.println("Resetting LEDs and system state...");
+
+  // Reset conditions: Support both RESET and RESTART commands.
+  if (command == "RESET" || command == "RESTART") {
+    Serial.println("Resetting LEDs and system state... please wait a second");
     resetLEDs();             // Turn all LEDs off.
     currentState = STATE_IDLE; // Reset the system state.
     blinkCount = 0;            // Reset blink counter.
     blinkOn = false;           // Reset blinking phase.
     return;                  // Exit without processing further.
   }
+  
   // --- Board A Commands ---
   if (command == "A1_RED") { 
     digitalWrite(LED_RED_A1, LOW);
@@ -311,44 +346,47 @@ bool checkAllGreen() {
 // Update the system state (non-blocking)
 // *********************
 void updateSystemState() {
-  if (checkGroupsActive()) {
-    if (checkAllGreen()) {
-      // All groups active and all green LEDs lit; start blinking sequence.
-      currentState = STATE_BLINKING;
-      blinkCount = 0;
-      blinkPrevMillis = millis();
-      blinkOn = false;
-    } else {
-      // Wait in this state until all green LEDs become active.
-      currentState = STATE_WAITING_FOR_GREEN;
-    }
-  } else {
-    // Not all groups have been set by incoming commands.
-    currentState = STATE_IDLE;
-  }
-}
+  unsigned long now = millis();
 
-// *********************
-// Update blinking sequence without blocking using millis()
-// *********************
-void updateBlinking(unsigned long currentMillis) {
-  if (currentMillis - blinkPrevMillis >= blinkInterval) {
-    blinkPrevMillis = currentMillis;
-    blinkOn = !blinkOn; // Toggle LED state
-
-    // Update all green LED pins accordingly.
-    for (int i = 0; i < 10; i++) {
-      digitalWrite(ledPins[i], blinkOn ? LOW : HIGH);
-    }
-
-    // Count blink cycles when turning the LEDs on.
-    if (blinkOn) {
-      blinkCount++;
-    }
-    if (blinkCount >= totalBlinks) {
-      // End the blinking sequence and reset LEDs.
+  // 1) If we're already in disco/blinking, check for timeout
+  if (currentState == STATE_BLINKING) {
+    if (now - blinkStartMillis >= blinkDuration) {
+      // 3 seconds have passed → stop disco
       resetLEDs();
       currentState = STATE_IDLE;
+      return;   // skip the rest
+    }
+  }
+
+  // 2) Otherwise, if all 10 groups are active+green, enter blinking
+  bool allActive = checkGroupsActive();
+  bool allGreen  = checkAllGreen();
+
+  if (allActive && allGreen) {
+    if (currentState != STATE_BLINKING) {
+      currentState     = STATE_BLINKING;
+      blinkStartMillis = now;     // start 3s window
+      blinkPrevMillis  = now;     // reset toggle timer
+      blinkOn          = false;   // begin with LEDs off
+    }
+  }
+  // 3) If not blinking, update between IDLE and WAITING
+  else if (currentState != STATE_BLINKING) {
+    currentState = allActive ? STATE_WAITING_FOR_GREEN : STATE_IDLE;
+  }
+}
+// *********************
+// Blinking sequence
+// *********************
+void updateBlinking(unsigned long now) {
+  // every blinkInterval ms, pick a fresh random on/off for each LED
+  if (now - blinkPrevMillis >= blinkInterval) {
+    blinkPrevMillis = now;
+
+    for (int i = 0; i < numAllLeds; i++) {
+      // random(0,2) returns either 0 or 1
+      // active‑low: LOW = ON, HIGH = OFF
+      digitalWrite(allLedPins[i], random(0, 2) ? LOW : HIGH);
     }
   }
 }
