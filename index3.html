@@ -660,6 +660,7 @@
             const instruction2Sound = new Audio('assets/03-Red Card.mp3');
             const instruction3Sound = new Audio('assets/04-Tap.mp3');
             const winSound = new Audio('assets/Tada_final.mp3');
+            const wrongWrongSound = new Audio('assets/SoundWindowsCriticalWarning.mp3');
 
             // ------------------------------
             // Global Variables and DOM References
@@ -671,6 +672,7 @@
             let cardCount = 0; // Progress variable: Scenario 1 starts at 0
             let currentInstruction = 1;
             const totalInstructions = 3;
+            let consecutiveRedCount = 0; //count consecutive red cards
 
             // ------------------------------
             // WebSocket Integration
@@ -722,10 +724,18 @@
 
                 if (color === "green") {
                     cardElement.classList.add("green");
+                    playSound(clickSound)
+                    consecutiveRedCount = 0;
                     console.log(`Added "green" class to ${cardId}`);
                 } else {
                     cardElement.classList.remove("green");
+                    consecutiveRedCount += 1;
                     console.log(`Removed "green" class from ${cardId}`);
+                    if (consecutiveRedCount > 3) {
+                        playSound(wrongWrongSound); // 4th+ straight red
+                    } else {
+                        playSound(wrongSound); // 1st–3rd red
+                    }
                 }
 
                 // Update overall progress, which then calls updateUI.
@@ -877,18 +887,33 @@
                         animateElement(messageCA, 'button-click', 300);
                     } else if (cardCount === 5) {
                         messageCA.textContent = "That’s right! California currently uses about 56% of clean electricity!";
+                        // 1) play the initial “you won” (confetti) sound
                         playSound(winSound);
-                        // Show animation (Sun Burst and Extra Animation)
+
+                        // 2) show the confetti animations
                         const sunburstEl = document.getElementById('sunburst');
                         const extraAnimationEl = document.getElementById('extra-animation');
                         sunburstEl.style.display = 'block';
                         extraAnimationEl.style.display = 'block';
-                        // Hide the animation after 3 seconds and then play the secondary win sound
+
+                        // 3) after 2.8s hide them and play the CA‑win narration
                         setTimeout(() => {
                             sunburstEl.style.display = 'none';
                             extraAnimationEl.style.display = 'none';
+
                             playSound(scenarioCASound_win);
+
+                            // 4) when that narration ends, wait 1s and then play the SMC‑start sound
+                            scenarioCASound_win.addEventListener('ended', () => {
+                                setTimeout(() => {
+                                    playSound(scenarioSMCSound_Start);
+                                }, 1000);
+                            }, {
+                                once: true
+                            });
+
                         }, 2800);
+                        // 5) still show your modal after a short delay
                         setTimeout(showModal, 500);
                     } else {
                         messageCA.textContent = "";
@@ -1055,7 +1080,7 @@
 
             removeCardButton.addEventListener('click', () => {
                 animateButton(removeCardButton);
-                playSound(clickSound);
+                playSound(wrongSound);
                 if (cardCount > 0) {
                     cardCount--;
                     updateUI();
