@@ -673,6 +673,8 @@
             let currentInstruction = 1;
             const totalInstructions = 3;
             let consecutiveRedCount = 0; //count consecutive red cards
+            let milestone30Played = false;
+            let milestone56Played = false;
 
             // ------------------------------
             // WebSocket Integration
@@ -881,11 +883,12 @@
             function updateUI() {
                 // --- Scenario 1 (California) ---
                 if (scenario1Page.style.display !== 'none') {
-                    if (cardCount === 3) {
+                    if (cardCount === 3 && !milestone30Played) {
                         messageCA.textContent = "California state has reached 30% clean energy by 1985!";
                         playSound(scenarioCASound_30);
                         animateElement(messageCA, 'button-click', 300);
-                    } else if (cardCount === 5) {
+                        milestone30Played = true;
+                    } else if (cardCount === 5 && !milestone56Played) {
                         messageCA.textContent = "That’s right! California currently uses about 56% of clean electricity!";
                         // 1) play the initial “you won” (confetti) sound
                         playSound(winSound);
@@ -912,9 +915,10 @@
                                 once: true
                             });
 
-                        }, 2800);
+                        }, 4800);
                         // 5) still show your modal after a short delay
                         setTimeout(showModal, 500);
+                        milestone56Played = true;
                     } else {
                         messageCA.textContent = "";
                     }
@@ -956,6 +960,8 @@
                 createCards(cardsCA, 0);
                 createCards(cardsSM, 0);
                 startScreen.style.display = 'flex';
+                let milestone30Played = false;
+                let milestone56Played = false;
             }
 
             // ------------------------------
