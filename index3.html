@@ -675,6 +675,8 @@
             let consecutiveRedCount = 0; //count consecutive red cards
             let milestone30Played = false;
             let milestone56Played = false;
+            let milestone70Played = false;
+
 
             // ------------------------------
             // WebSocket Integration
@@ -930,6 +932,7 @@
                         messageSM.textContent = "You’re getting close! San Mateo reached 75% clean electricity in 2016";
                         playSound(scenarioSMCSound_70);
                         animateElement(messageSM, 'button-click', 300);
+                        milestone70Played = true;
                     } else if (cardCount === 10) {
                         messageSM.textContent = "You got it! San Mateo serves 100% clean electricity – leading the nation!";
                         playSound(scenarioSMCSound_win);
@@ -960,8 +963,9 @@
                 createCards(cardsCA, 0);
                 createCards(cardsSM, 0);
                 startScreen.style.display = 'flex';
-                let milestone30Played = false;
-                let milestone56Played = false;
+                milestone30Played = false;
+                milestone56Played = false;
+                milestone70Played = false;
             }
 
             // ------------------------------
