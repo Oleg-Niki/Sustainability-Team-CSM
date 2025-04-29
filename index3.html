@@ -676,6 +676,7 @@
             let milestone30Played = false;
             let milestone56Played = false;
             let milestone70Played = false;
+            let milestone100Played = false;
 
 
             // ------------------------------
@@ -917,7 +918,7 @@
                                 once: true
                             });
 
-                        }, 4800);
+                        }, 3000);
                         // 5) still show your modal after a short delay
                         setTimeout(showModal, 500);
                         milestone56Played = true;
@@ -937,6 +938,7 @@
                         messageSM.textContent = "You got it! San Mateo serves 100% clean electricity – leading the nation!";
                         playSound(scenarioSMCSound_win);
                         animateElement(messageSM, 'button-click', 300);
+                        milestone100Played = true;
                         setTimeout(showFinalModal, 1000);
                     } else {
                         messageSM.textContent = "";
@@ -966,6 +968,7 @@
                 milestone30Played = false;
                 milestone56Played = false;
                 milestone70Played = false;
+                milestone100Played = false;
             }
 
             // ------------------------------
