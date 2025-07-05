@@ -133,7 +133,7 @@ void setup() {
   pinMode(LED_RED_F1, OUTPUT);
   pinMode(LED_GREEN_F1, OUTPUT);
 
-  // Turn all LEDs off initially (active-low: HIGH means LED off)
+  // Turn all LEDs RED initially
   resetLEDs();
 
   Serial.println("MEGA finished setup");
@@ -208,7 +208,7 @@ void handleLEDCommand(String command) {
   // Reset conditions: Support both RESET and RESTART commands.
   if (command == "RESET" || command == "RESTART") {
     Serial.println("Resetting LEDs and system state... please wait a second");
-    resetLEDs();             // Turn all LEDs off.
+    resetLEDs();             // Turn all LEDs RED.
     currentState = STATE_IDLE; // Reset the system state.
     blinkCount = 0;            // Reset blink counter.
     blinkOn = false;           // Reset blinking phase.
@@ -394,29 +394,20 @@ void updateBlinking(unsigned long now) {
 // *********************
 // Reset all LED pins to off (active-low: HIGH means off)
 // *********************
-void resetLEDs() {
-  digitalWrite(LED_RED_A1, HIGH);
-  digitalWrite(LED_GREEN_A1, HIGH);
-  digitalWrite(LED_RED_A2, HIGH);
-  digitalWrite(LED_GREEN_A2, HIGH);
-  
-  digitalWrite(LED_RED_C1, HIGH);
-  digitalWrite(LED_GREEN_C1, HIGH);
-  digitalWrite(LED_RED_C2, HIGH);
-  digitalWrite(LED_GREEN_C2, HIGH);
-  
-  digitalWrite(LED_RED_D1, HIGH);
-  digitalWrite(LED_GREEN_D1, HIGH);
-  digitalWrite(LED_RED_D2, HIGH);
-  digitalWrite(LED_GREEN_D2, HIGH);
-  digitalWrite(LED_RED_D3, HIGH);
-  digitalWrite(LED_GREEN_D3, HIGH);
-  
-  digitalWrite(LED_RED_E1, HIGH);
-  digitalWrite(LED_GREEN_E1, HIGH);
-  digitalWrite(LED_RED_E2, HIGH);
-  digitalWrite(LED_GREEN_E2, HIGH);
-  
-  digitalWrite(LED_RED_F1, HIGH);
-  digitalWrite(LED_GREEN_F1, HIGH);
+void resetLEDs() { 
+// RED ON, GREEN OFF (active-low logic: LOW = ON, HIGH = OFF)
+  digitalWrite(LED_RED_A1, LOW);    digitalWrite(LED_GREEN_A1, HIGH);
+  digitalWrite(LED_RED_A2, LOW);    digitalWrite(LED_GREEN_A2, HIGH);
+
+  digitalWrite(LED_RED_C1, LOW);    digitalWrite(LED_GREEN_C1, HIGH);
+  digitalWrite(LED_RED_C2, LOW);    digitalWrite(LED_GREEN_C2, HIGH);
+
+  digitalWrite(LED_RED_D1, LOW);    digitalWrite(LED_GREEN_D1, HIGH);
+  digitalWrite(LED_RED_D2, LOW);    digitalWrite(LED_GREEN_D2, HIGH);
+  digitalWrite(LED_RED_D3, LOW);    digitalWrite(LED_GREEN_D3, HIGH);
+
+  digitalWrite(LED_RED_E1, LOW);    digitalWrite(LED_GREEN_E1, HIGH);
+  digitalWrite(LED_RED_E2, LOW);    digitalWrite(LED_GREEN_E2, HIGH);
+
+  digitalWrite(LED_RED_F1, LOW);    digitalWrite(LED_GREEN_F1, HIGH);
 }
