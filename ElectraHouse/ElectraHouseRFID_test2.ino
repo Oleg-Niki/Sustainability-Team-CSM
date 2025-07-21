@@ -1,9 +1,6 @@
 /**
-* --------------------------------------------------------------------------------------------------------------------
-* Modified sketch/program to read data from more than one PICC using sequential SS scanning.
-* This code enables one RFID reader at a time by pulling its SS pin LOW, while ensuring the others remain disabled.
-* SS pins used are 2, 3, and 4 and the reset pin is 9.
-* --------------------------------------------------------------------------------------------------------------------
+ // Enable current reader by pulling its SS pin LOW
+    digitalWrite(ssPins[reader], LOW);
 */
  
 #include <SPI.h>
