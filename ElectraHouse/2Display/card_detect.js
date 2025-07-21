@@ -24,10 +24,10 @@ app.get("/display1", (req, res) => {
 app.get("/display2", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "display2.html"));
 });
-const port = 80;
+const port = 3000;
 
 // ✅ Correct the serial port name for Windows
-const portName = "COM10"; // Ensure this matches your detected port
+const portName = "/dev/ttyUSB0"; // Ensure this matches your detected port on Raspberry Pi
 const serialPort = new SerialPort({
     path: portName,
     baudRate: 9600,
@@ -56,16 +56,6 @@ serialPort.on("close", () => {
 
 // ✅ Ensure parser is correctly attached
 const parser = serialPort.pipe(new ReadlineParser({ delimiter: "\n" }));
-
-// ✅ Prevent WebSocket from crashing if connection is lost
-parser.on("data", (id) => {
-    console.log(`Received from Serial: ${id}`);
-    if (primaryWs && primaryWs.readyState === WebSocket.OPEN) {
-        primaryWs.send(id);
-    } else {
-        console.warn("WebSocket is not open. Data not sent.");
-    }
-});
 
 // WebSocket setup
 const server = http.createServer(app);
