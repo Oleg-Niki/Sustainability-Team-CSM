@@ -875,15 +875,21 @@
 
 
             function createCards(container) {
-                // Assume boardCommands is the array of board codes in order:
-                // ["A1", "A2", "C1", "C2", "D1", "D2", "D3", "E1", "E2", "F1"]
-                container.innerHTML = ''; // Clear any existing elements
+                container.innerHTML = '';
                 boardCommands.forEach(boardCmd => {
-                    // Create a new card element
                     const card = document.createElement('div');
                     card.classList.add('card');
-                    // Set an id in lower case (e.g., "card-a1")
                     card.id = "card-" + boardCmd.toLowerCase();
+                    container.appendChild(card);
+                });
+            }
+            // For Scenario 2 (San Mateo)
+            function createCardsScenario2(container) {
+                container.innerHTML = '';
+                boardCommands.forEach(boardCmd => {
+                    const card = document.createElement('div');
+                    card.classList.add('card');
+                    card.id = "card-" + boardCmd.toLowerCase() + "-sm";
                     container.appendChild(card);
                 });
             }
@@ -964,16 +970,21 @@
                 scenario2Page.style.display = 'none';
                 modal.style.display = 'none';
                 finalModal.style.display = 'none';
-                header.style.display = 'none';
+                header.style.display = 'block';
                 messageCA.textContent = "";
                 messageSM.textContent = "";
-                createCards(cardsCA, 0);
-                createCards(cardsSM, 0);
-                startScreen.style.display = 'flex';
+
+                // Re-create the card containers
+                createCards(cardsCA);
+                createCardsScenario2(cardsSM);
+
                 milestone30Played = false;
                 milestone56Played = false;
                 milestone70Played = false;
                 milestone100Played = false;
+
+                instructionContainer.style.display = 'flex';
+                showInstructionScreen(1);
             }
 
             // ------------------------------
@@ -1175,10 +1186,10 @@
             }
 
 
-            theEndButton.addEventListener('click', () => {
-                hideFinalModal();
-                showTheEndScreen();
-            });
+            // theEndButton.addEventListener('click', () => {
+            //  hideFinalModal();
+            //  showTheEndScreen();
+            //}); 
         });
     </script>
 </body>
