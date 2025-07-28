@@ -961,36 +961,45 @@
             // Reset Function: Resets UI and Variables to Start State
             // ------------------------------
             function resetExhibit() {
+                console.log('=== RESET EXHIBIT CALLED ===');
+
                 cardCount = 0;
                 currentInstruction = 1;
                 boardIndex = 0;
+
+                // Hide everything
                 instructionContainer.style.display = 'none';
                 mainScreen.style.display = 'none';
                 scenario1Page.style.display = 'none';
                 scenario2Page.style.display = 'none';
                 modal.style.display = 'none';
                 finalModal.style.display = 'none';
-                header.style.display = 'block';
+                header.style.display = 'none';
                 messageCA.textContent = "";
                 messageSM.textContent = "";
 
-                // Re-create the card containers
-                createCards(cardsCA);
-                createCardsScenario2(cardsSM);
+                // Show the start/home screen
+                startScreen.style.display = 'flex';
 
+                // Reset milestone flags, recreate cards if needed, etc.
                 milestone30Played = false;
                 milestone56Played = false;
                 milestone70Played = false;
                 milestone100Played = false;
+                createCards(cardsCA);
+                createCardsScenario2(cardsSM);
 
-                instructionContainer.style.display = 'flex';
-                showInstructionScreen(1);
+                // Logging (optional)
+                console.log('=== RESET COMPLETE, back to home screen ===');
             }
+
+
 
             // ------------------------------
             // Instruction Navigation Functions
             // ------------------------------
             function showInstructionScreen(index) {
+                console.log('showInstructionScreen called with index:', index);
                 // Clear any pending instruction sound timer
                 if (instructionSoundTimer) {
                     clearTimeout(instructionSoundTimer);
@@ -1072,16 +1081,21 @@
                 instructionContainer.style.display = 'flex';
                 showInstructionScreen(1);
             });
-            scenario1Next.addEventListener('click', () => {
-                animateButton(scenario1Next);
-                playSound(clickSound);
-                showScenario2();
-            });
-            scenario2Back.addEventListener('click', () => {
-                animateButton(scenario2Back);
-                playSound(clickSound);
-                showScenario1();
-            });
+            if (scenario1Next) {
+                scenario1Next.addEventListener('click', () => {
+                    animateButton(scenario1Next);
+                    playSound(clickSound);
+                    showScenario2();
+                });
+            }
+
+            if (scenario2Back) {
+                scenario2Back.addEventListener('click', () => {
+                    animateButton(scenario2Back);
+                    playSound(clickSound);
+                    showScenario1();
+                });
+            }
 
             addCardButton.addEventListener('click', () => {
                 animateButton(addCardButton);
@@ -1094,19 +1108,16 @@
                 }
             });
             const scenario1Back = document.getElementById('scenario1-back');
-
-            scenario1Back.addEventListener('click', () => {
-                animateButton(scenario1Back);
-                playSound(clickSound);
-                // Hide Scenario 1 and main interactive screen
-                scenario1Page.style.display = 'none';
-                mainScreen.style.display = 'none';
-                // Show instruction container and jump to Instruction #3
-                instructionContainer.style.display = 'flex';
-                showInstructionScreen(totalInstructions);
-            });
-
-
+            if (scenario1Back) {
+                scenario1Back.addEventListener('click', () => {
+                    animateButton(scenario1Back);
+                    playSound(clickSound);
+                    scenario1Page.style.display = 'none';
+                    mainScreen.style.display = 'none';
+                    instructionContainer.style.display = 'flex';
+                    showInstructionScreen(totalInstructions);
+                });
+            }
             removeCardButton.addEventListener('click', () => {
                 animateButton(removeCardButton);
                 playSound(wrongSound);
@@ -1117,8 +1128,10 @@
                     sendCommand("red");
                 }
             });
-            restartButton.addEventListener('click', resetExhibit);
-            resetExhibit();
+            restartButton.addEventListener('click', function() {
+                console.log('Restart button clicked!');
+                resetExhibit();
+            });
 
             // ------------------------------
             // Modal and Final Modal Handling
